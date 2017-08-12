@@ -1,32 +1,27 @@
 {
-  "name": "pixi-puff",
+  "name": "powderpuff",
   "version": "0.0.1",
-  "description": "Responsive image reveal library using PixiJS",
-  "main": "src/pixi-puff.js",
+  "description": "Responsive image reveal library",
+  "main": "src/powderpuff.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CyanLetter/pixi-puff.git"
+    "url": "git+https://github.com/CyanLetter/powderpuff.git"
   },
   "keywords": [
     "image",
     "gallery",
     "reveal",
     "animation",
-    "pixi",
     "smoke",
     "cloud"
   ],
   "author": "Dakota Ling",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CyanLetter/pixi-puff/issues"
+    "url": "https://github.com/CyanLetter/powderpuff/issues"
   },
-  "homepage": "https://github.com/CyanLetter/pixi-puff#readme",
-  "dependencies": {
-    "gsap": "^1.20.2",
-    "pixi.js": "^4.5.4"
-  }
+  "homepage": "https://github.com/CyanLetter/powderpuff#readme",
 }
