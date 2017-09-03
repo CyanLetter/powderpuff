@@ -21,7 +21,7 @@ Powderpuff.prototype.constructor = Powderpuff;
 
 Powderpuff.prototype.init = function(options) {
 	// get canvas, load images
-	console.log("puffing up...");
+	console.log("powdering...");
 
 	// example object
 	/*
@@ -34,6 +34,12 @@ Powderpuff.prototype.init = function(options) {
 		]
 	}
 	*/
+	this.lastTime = Date.now();
+	this.currentTime = Date.now();
+	this.delta = 0;
+	this.revealDuration = 3000;
+
+	this.smokePoints = [];
 
 	// get and load images
 	this.images = [];
@@ -94,7 +100,22 @@ Powderpuff.prototype.onImageLoad = function() {
 
 Powderpuff.prototype.reveal = function() {
 	// start a reveal animation
+	this.revealing = true;
+	this.revealTime = 0;
 	console.log("revealing");
+
+	for (var i = 0; i < 30; i++) {
+		this.smokePoints.push({
+			start: {
+				x: 0,
+				y: (this.canvas.height / 30) * i
+			},
+			end: {
+				x: this.canvas.width,
+				y: (this.canvas.height / 30) * i
+			}
+		});
+	}
 
 	for (var i = 0; i < this.images.length; i++) {
 		this.ctx.drawImage(this.images[i], 0, 0);
@@ -110,9 +131,20 @@ Powderpuff.prototype.resize = function() {
 	this.renderCanvas.height = this.canvas.height = this.canvas.offsetHeight;
 };
 
+Powderpuff.prototype.lerp = function(value1, value2, amount) {
+	return (1 - amount) * value1 + amount * value2;
+};
+
 Powderpuff.prototype.update = function() {
 	// run animations, update rendertextures
-	// console.log("updating");
+	this.currentTime = Date.now();
+	if (this.revealing) {
+		// deltatime
+		this.revealTime += this.currentTime - this.lastTime;
+		for (var i = 0; i < this.smokePoints.length) {
+
+		}
+	}
 
 	requestAnimationFrame(this.update);
 };
