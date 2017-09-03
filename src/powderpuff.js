@@ -34,11 +34,12 @@ Powderpuff.prototype.init = function(options) {
 		]
 	}
 	*/
-	this.lastTime = Date.now();
-	this.currentTime = Date.now();
+	// this.lastTime = Date.now();
+	// this.currentTime = Date.now();
 	this.delta = 0;
-	this.revealDuration = 3000;
+	this.revealDuration = 1000;
 
+	this.particleCount = 24;
 	this.smokePoints = [];
 
 	// get and load images
@@ -71,6 +72,12 @@ Powderpuff.prototype.init = function(options) {
 	this.renderCanvas = document.createElement("canvas");
 	this.renderCanvas.width = this.canvas.width;
 	this.renderCanvas.height = this.canvas.height;
+	this.rctx = this.renderCanvas.getContext("2d");
+
+	this.smokeCanvas = document.createElement("canvas");
+	this.smokeCanvas.width = this.canvas.width;
+	this.smokeCanvas.height = this.canvas.height;
+	this.sctx = this.smokeCanvas.getContext("2d");
 
 	if (this.canvas === null) {
 		console.error("Could not find canvas with id of " + this.canvasId);
@@ -102,24 +109,25 @@ Powderpuff.prototype.reveal = function() {
 	// start a reveal animation
 	this.revealing = true;
 	this.revealTime = 0;
+
 	console.log("revealing");
 
-	for (var i = 0; i < 30; i++) {
+	for (var i = 0; i < this.particleCount; i++) {
 		this.smokePoints.push({
 			start: {
 				x: 0,
-				y: (this.canvas.height / 30) * i
+				y: (this.canvas.height / this.particleCount) * i
 			},
 			end: {
 				x: this.canvas.width,
-				y: (this.canvas.height / 30) * i
+				y: (this.canvas.height / this.particleCount) * i
 			}
 		});
 	}
 
-	for (var i = 0; i < this.images.length; i++) {
-		this.ctx.drawImage(this.images[i], 0, 0);
-	}
+	this.canvasScale = [
+
+	];
 
 	// make canvas for smoke particles. Draw to and scale that
 	// Draw that to the offscreen canvas
@@ -129,22 +137,62 @@ Powderpuff.prototype.reveal = function() {
 Powderpuff.prototype.resize = function() {
 	this.renderCanvas.width = this.canvas.width = this.canvas.offsetWidth;
 	this.renderCanvas.height = this.canvas.height = this.canvas.offsetHeight;
+	this.smokeCanvas.width = this.canvas.width = this.canvas.offsetWidth;
+	this.smokeCanvas.height = this.canvas.height = this.canvas.offsetHeight;
 };
 
 Powderpuff.prototype.lerp = function(value1, value2, amount) {
 	return (1 - amount) * value1 + amount * value2;
 };
 
-Powderpuff.prototype.update = function() {
+Powderpuff.prototype.update = function(timestamp) {
 	// run animations, update rendertextures
-	this.currentTime = Date.now();
-	if (this.revealing) {
-		// deltatime
-		this.revealTime += this.currentTime - this.lastTime;
-		for (var i = 0; i < this.smokePoints.length) {
+	this.lastTime = this.lastTime || timestamp;
 
+	if (this.revealing) {
+		
+		console.log("revealing...");
+		// deltatime
+		this.revealTime += timestamp - this.lastTime;
+		var amt = this.revealTime / this.revealDuration;
+		// console.log(timestamp - this.lastTime);
+		if (amt <= 1) {
+			this.sctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+			for (var i = 0; i < this.smokePoints.length; i++) {
+				var pt = this.smokePoints[i];
+				pt.x = this.lerp(pt.start.x, pt.end.x, amt);
+				pt.y = this.lerp(pt.start.y, pt.end.y, amt);
+				// add noise
+				pt.x += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
+				pt.y += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
+				this.sctx.beginPath();
+				this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount) / 1.5, 0, Math.PI * 2, false);
+				this.sctx.fill();
+			}
+		}
+		
+		this.rctx.drawImage(
+			this.smokeCanvas, 
+			amt * -100, 
+			amt * -100, 
+			this.canvas.width + (amt * 200), 
+			this.canvas.height + (amt * 200));
+
+		this.ctx.globalCompositeOperation = "source-over";
+		for (var i = 0; i < this.images.length; i++) {
+			this.ctx.drawImage(this.images[i], 0, 0);
+		}
+
+		this.ctx.globalCompositeOperation = "destination-in";
+		this.ctx.drawImage(this.renderCanvas, 0, 0);
+		
+		if (amt >= 2) {
+			this.revealing = false;
+			console.log("done!");
 		}
 	}
+
+	this.lastTime = timestamp;
 
 	requestAnimationFrame(this.update);
 };
