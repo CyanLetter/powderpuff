@@ -37,27 +37,28 @@ Powderpuff.prototype.init = function(options) {
 	// this.lastTime = Date.now();
 	// this.currentTime = Date.now();
 	this.delta = 0;
-	this.revealDuration = 1000;
+	this.particleDuration = 1000; // time it takes for particles to finish moving
+	this.revealDuration = 2000; // total time of the reveal effect. This is greater to allow for a trailing reveal efffect
 
 	this.particleCount = 24;
 	this.smokePoints = [];
+	this.smokeScale = 0.2; // amount to increase the smoke canvas size
 
 	// get and load images
 	this.images = [];
 	this.loadedImages = 0;
 
+	console.log(typeof options.images);
+
 	if (typeof options === "string") {
-		this.images.push(new Image);
-		this.images[0].src = options;
+		this.images.push(this.createImageObject(options));
+		
 		options = {};
 	} else if (typeof options.images === "string") {
-		this.images.push(new Image);
-		this.images[0].src = options;
-		
-	} else if (typeof options.images === "array") {
+		this.images.push(this.createImageObject(options.images));		
+	} else if (typeof options.images === "object" && Array.isArray(options.images) === true) {
 		for (var i = 0; i < options.images.length; i++) {
-			this.images.push(new Image);
-			this.images[i].src = options.images[i];
+			this.images.push(this.createImageObject(options.images[i]));
 		}
 	} else {
 		console.error("Invalid format - images must be passed as a url or array of urls");
@@ -91,8 +92,24 @@ Powderpuff.prototype.init = function(options) {
 	for (var i = 0; i < this.images.length; i++) {
 		// set load callbacks
 		// setting here so we know the rest of the setup went successfully
-		this.images[i].onload = this.onImageLoad;
+		this.images[i].img.onload = this.onImageLoad;
 	}
+};
+
+Powderpuff.prototype.createImageObject = function(src) {
+	var newObj = {
+		src: src,
+		img: new Image,
+		scale: 0.2,
+		x: 0,
+		y: 0,
+		anchor: {
+			x: 0.5, 
+			y: 0.5
+		}
+	};
+	newObj.img.src = newObj.src;
+	return newObj;
 };
 
 Powderpuff.prototype.onImageLoad = function() {
@@ -134,6 +151,42 @@ Powderpuff.prototype.reveal = function() {
 	// then draw the images to main canvas and mask with smoke canvas
 };
 
+Powderpuff.prototype.drawParticles = function(amt) {
+	this.sctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+	for (var i = 0; i < this.smokePoints.length; i++) {
+		var pt = this.smokePoints[i];
+		pt.x = this.lerp(pt.start.x, pt.end.x, amt);
+		pt.y = this.lerp(pt.start.y, pt.end.y, amt);
+		// add noise
+		pt.x += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
+		pt.y += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
+		this.sctx.beginPath();
+		this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount) / 1.5, 0, Math.PI * 2, false);
+		this.sctx.fill();
+	}
+};
+
+Powderpuff.prototype.drawImages = function(amt) {
+	this.ctx.globalCompositeOperation = "source-over";
+	for (var i = 0; i < this.images.length; i++) {
+		var image = this.images[i];
+		var imgScale = this.scaleFromAnchor(image.img.width, image.img.height, amt * image.scale, image.anchor.x, image.anchor.y);
+		this.ctx.drawImage(image.img, image.x + imgScale.x, image.y + imgScale.y, imgScale.width, imgScale.height);
+	}
+};
+
+Powderpuff.prototype.scaleFromAnchor = function(w, h, scale, aX, aY) {
+	// return scale values that can be used in drawImage operations
+	aX = typeof aX === "undefined" ? 0.5 : aX; // default to center center
+	aY = typeof aY === "undefined" ? 0.5 : aY;
+	return {
+		x: (scale * aX) * w * -1,
+		y: (scale * aY) * h * -1,
+		width: w + (scale * w),
+		height: h + (scale * h)
+	}
+};
+
 Powderpuff.prototype.resize = function() {
 	this.renderCanvas.width = this.canvas.width = this.canvas.offsetWidth;
 	this.renderCanvas.height = this.canvas.height = this.canvas.offsetHeight;
@@ -150,43 +203,33 @@ Powderpuff.prototype.update = function(timestamp) {
 	this.lastTime = this.lastTime || timestamp;
 
 	if (this.revealing) {
-		
-		console.log("revealing...");
 		// deltatime
 		this.revealTime += timestamp - this.lastTime;
-		var amt = this.revealTime / this.revealDuration;
-		// console.log(timestamp - this.lastTime);
-		if (amt <= 1) {
-			this.sctx.fillStyle = "rgba(255, 255, 255, 0.05)";
-			for (var i = 0; i < this.smokePoints.length; i++) {
-				var pt = this.smokePoints[i];
-				pt.x = this.lerp(pt.start.x, pt.end.x, amt);
-				pt.y = this.lerp(pt.start.y, pt.end.y, amt);
-				// add noise
-				pt.x += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
-				pt.y += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
-				this.sctx.beginPath();
-				this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount) / 1.5, 0, Math.PI * 2, false);
-				this.sctx.fill();
-			}
+		var particleTime = this.revealTime / this.particleDuration;
+		var totalTime = this.revealTime / this.revealDuration;
+
+		if (particleTime <= 1) {
+			this.drawParticles(particleTime);
 		}
+		
+		// draw smoke to render canvas
+		var smokeCanvasDims = this.scaleFromAnchor(this.canvas.width, this.canvas.height, totalTime * this.smokeScale, 1 - particleTime);
 		
 		this.rctx.drawImage(
 			this.smokeCanvas, 
-			amt * -100, 
-			amt * -100, 
-			this.canvas.width + (amt * 200), 
-			this.canvas.height + (amt * 200));
+			smokeCanvasDims.x,
+			smokeCanvasDims.y,
+			smokeCanvasDims.width,
+			smokeCanvasDims.height);
 
-		this.ctx.globalCompositeOperation = "source-over";
-		for (var i = 0; i < this.images.length; i++) {
-			this.ctx.drawImage(this.images[i], 0, 0);
-		}
+		// draw base images
+		this.drawImages(totalTime);
 
+		// mask images with smoke
 		this.ctx.globalCompositeOperation = "destination-in";
 		this.ctx.drawImage(this.renderCanvas, 0, 0);
 		
-		if (amt >= 2) {
+		if (totalTime >= 1) {
 			this.revealing = false;
 			console.log("done!");
 		}
