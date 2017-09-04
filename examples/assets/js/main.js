@@ -7,5 +7,5 @@ window.onload = function() {
 	});
 	pp.images[1].y = 340;
 
-	document.getElementById("revealButton").onclick = pp.reveal;
+	window.setTimeout(pp.reveal, 1000);
 }

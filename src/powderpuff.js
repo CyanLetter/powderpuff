@@ -23,19 +23,6 @@ Powderpuff.prototype.init = function(options) {
 	// get canvas, load images
 	console.log("powdering...");
 
-	// example object
-	/*
-	{
-		canvasId: canvas ID,
-		canvas: canvas element, // generate this automatically
-		images: [
-			// array or single image
-			// todo: add anchoring options for the images
-		]
-	}
-	*/
-	// this.lastTime = Date.now();
-	// this.currentTime = Date.now();
 	this.delta = 0;
 	this.particleDuration = 1000; // time it takes for particles to finish moving
 	this.revealDuration = 2000; // total time of the reveal effect. This is greater to allow for a trailing reveal efffect
@@ -47,8 +34,6 @@ Powderpuff.prototype.init = function(options) {
 	// get and load images
 	this.images = [];
 	this.loadedImages = 0;
-
-	console.log(typeof options.images);
 
 	if (typeof options === "string") {
 		this.images.push(this.createImageObject(options));
@@ -198,6 +183,10 @@ Powderpuff.prototype.lerp = function(value1, value2, amount) {
 	return (1 - amount) * value1 + amount * value2;
 };
 
+Powderpuff.prototype.easeOutQuad = function(t) {
+	return t * (2 - t);
+};
+
 Powderpuff.prototype.update = function(timestamp) {
 	// run animations, update rendertextures
 	this.lastTime = this.lastTime || timestamp;
@@ -207,6 +196,7 @@ Powderpuff.prototype.update = function(timestamp) {
 		this.revealTime += timestamp - this.lastTime;
 		var particleTime = this.revealTime / this.particleDuration;
 		var totalTime = this.revealTime / this.revealDuration;
+		var easeTime = this.easeOutQuad(totalTime);
 
 		if (particleTime <= 1) {
 			this.drawParticles(particleTime);
@@ -223,7 +213,7 @@ Powderpuff.prototype.update = function(timestamp) {
 			smokeCanvasDims.height);
 
 		// draw base images
-		this.drawImages(totalTime);
+		this.drawImages(easeTime);
 
 		// mask images with smoke
 		this.ctx.globalCompositeOperation = "destination-in";
