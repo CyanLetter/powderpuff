@@ -11,6 +11,7 @@ Powderpuff = function(options) {
 	this.init = this.init.bind(this);
 	this.onImageLoad = this.onImageLoad.bind(this);
 	this.reveal = this.reveal.bind(this);
+	this.requestResize = this.requestResize.bind(this);
 	this.resize = this.resize.bind(this);
 	this.update = this.update.bind(this);
 
@@ -23,13 +24,18 @@ Powderpuff.prototype.init = function(options) {
 	// get canvas, load images
 	console.log("powdering...");
 
+	this.needsResize = true;
+
 	this.delta = 0;
 	this.particleDuration = 1000; // time it takes for particles to finish moving
 	this.revealDuration = 2000; // total time of the reveal effect. This is greater to allow for a trailing reveal efffect
+	this.particleTime = 0;
+	this.totalTime = 0;
+	this.revealProgress = 0;
 
 	this.particleCount = 24;
 	this.smokePoints = [];
-	this.smokeScale = 0.2; // amount to increase the smoke canvas size
+	this.smokeScale = 0.5; // amount to increase the smoke canvas size
 
 	// get and load images
 	this.images = [];
@@ -100,8 +106,7 @@ Powderpuff.prototype.onImageLoad = function() {
 	this.loadedImages++;
 	if (this.loadedImages === this.images.length) {
 		// start
-		window.resize = this.resize;
-		this.resize();
+		window.addEventListener("resize", this.requestResize);
 		this.update();
 	}
 };
@@ -136,7 +141,7 @@ Powderpuff.prototype.reveal = function() {
 };
 
 Powderpuff.prototype.drawParticles = function(amt) {
-	this.sctx.fillStyle = "rgba(255, 255, 255, 0.05)";
+	this.sctx.fillStyle = "rgba(255, 255, 255, 0.01)";
 	for (var i = 0; i < this.smokePoints.length; i++) {
 		var pt = this.smokePoints[i];
 		pt.x = this.lerp(pt.start.x, pt.end.x, amt);
@@ -145,12 +150,23 @@ Powderpuff.prototype.drawParticles = function(amt) {
 		pt.x += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
 		pt.y += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
 		this.sctx.beginPath();
-		this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount) / 1.5, 0, Math.PI * 2, false);
+		this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount), 0, Math.PI * 2, false);
 		this.sctx.fill();
 	}
 };
 
-Powderpuff.prototype.drawImages = function(amt) {
+Powderpuff.prototype.drawSmoke = function() {
+	var smokeCanvasDims = this.scaleDrawable(this.canvas.width, this.canvas.height, this.totalTime * this.smokeScale, this.easeOutQuad(1 - this.particleTime));
+		
+	this.rctx.drawImage(
+		this.smokeCanvas, 
+		smokeCanvasDims.x,
+		smokeCanvasDims.y,
+		smokeCanvasDims.width,
+		smokeCanvasDims.height);
+};
+
+Powderpuff.prototype.drawImages = function() {
 	this.ctx.globalCompositeOperation = "source-over";
 	for (var i = 0; i < this.images.length; i++) {
 		var image = this.images[i];
@@ -161,9 +177,7 @@ Powderpuff.prototype.drawImages = function(amt) {
 		var imgScale = this.scaleDrawable(
 			image.img.width * initialScale, 
 			image.img.height * initialScale, 
-			amt * image.scale);
-
-		console.log(imgScale.width);
+			this.revealProgress * image.scale);
 
 		this.ctx.drawImage(
 			image.img, 
@@ -172,6 +186,10 @@ Powderpuff.prototype.drawImages = function(amt) {
 			imgScale.width, 
 			imgScale.height);
 	}
+
+	// mask images with smoke
+	this.ctx.globalCompositeOperation = "destination-in";
+	this.ctx.drawImage(this.renderCanvas, 0, 0);
 };
 
 Powderpuff.prototype.getAnchorPos = function(anchor, w, h) {
@@ -206,11 +224,24 @@ Powderpuff.prototype.scaleDrawable = function(w, h, scale) {
 	}
 };
 
+Powderpuff.prototype.requestResize = function() {
+	this.needsResize = true;
+};
+
 Powderpuff.prototype.resize = function() {
-	this.renderCanvas.width = this.canvas.width = this.canvas.offsetWidth;
-	this.renderCanvas.height = this.canvas.height = this.canvas.offsetHeight;
-	this.smokeCanvas.width = this.canvas.width = this.canvas.offsetWidth;
-	this.smokeCanvas.height = this.canvas.height = this.canvas.offsetHeight;
+	this.renderCanvas.width = this.smokeCanvas.width = this.canvas.width = this.canvas.offsetWidth;
+	this.renderCanvas.height = this.smokeCanvas.height = this.canvas.height = this.canvas.offsetHeight;
+	if (this.revealProgress > 0) {
+		// reveal everything, don't try to deal with resizing mid-animation
+		this.sctx.fillStyle = "rgba(255, 255, 255, 1)";
+		this.sctx.beginPath();
+		this.sctx.rect(0, 0, this.smokeCanvas.width, this.smokeCanvas.height);
+		this.sctx.fill();
+	}
+	
+	this.drawSmoke();
+	this.drawImages();
+	this.needsResize = false;
 };
 
 Powderpuff.prototype.lerp = function(value1, value2, amount) {
@@ -225,35 +256,28 @@ Powderpuff.prototype.update = function(timestamp) {
 	// run animations, update rendertextures
 	this.lastTime = this.lastTime || timestamp;
 
+	if (this.needsResize === true) {
+		this.resize();
+	}
+
 	if (this.revealing) {
 		// deltatime
 		this.revealTime += timestamp - this.lastTime;
-		var particleTime = this.revealTime / this.particleDuration;
-		var totalTime = this.revealTime / this.revealDuration;
-		var easeTime = this.easeOutQuad(totalTime);
+		this.particleTime = this.revealTime / this.particleDuration;
+		this.totalTime = this.revealTime / this.revealDuration;
+		this.revealProgress = this.easeOutQuad(this.totalTime);
 
-		if (particleTime <= 1) {
-			this.drawParticles(particleTime);
+		if (this.particleTime <= 1) {
+			this.drawParticles(this.particleTime);
 		}
 		
 		// draw smoke to render canvas
-		var smokeCanvasDims = this.scaleDrawable(this.canvas.width, this.canvas.height, totalTime * this.smokeScale, 1 - particleTime);
-		
-		this.rctx.drawImage(
-			this.smokeCanvas, 
-			smokeCanvasDims.x,
-			smokeCanvasDims.y,
-			smokeCanvasDims.width,
-			smokeCanvasDims.height);
+		this.drawSmoke();
 
 		// draw base images
-		this.drawImages(easeTime);
-
-		// mask images with smoke
-		this.ctx.globalCompositeOperation = "destination-in";
-		this.ctx.drawImage(this.renderCanvas, 0, 0);
+		this.drawImages();
 		
-		if (totalTime >= 1) {
+		if (this.totalTime >= 1) {
 			this.revealing = false;
 			console.log("done!");
 		}
@@ -264,23 +288,6 @@ Powderpuff.prototype.update = function(timestamp) {
 	requestAnimationFrame(this.update);
 };
 
-
-/**
- * Drawable Element Class for Powderpuff
- */
-/*
-PPDrawable = function(options) {
-	options = options || {};
-
-	// bind functions
-	this.init = this.init.bind(this);
-	this.onImageLoad = this.onImageLoad.bind(this);
-	this.reveal = this.reveal.bind(this);
-	this.resize = this.resize.bind(this);
-	this.update = this.update.bind(this);
-
-	this.init(options);
+Powderpuff.prototype.destroy = function() {
+	window.removeEventListener("resize", this.requestResize);
 };
-PPDrawable.prototype = Object.create(Object.prototype);
-PPDrawable.prototype.constructor = PPDrawable;
-*/
