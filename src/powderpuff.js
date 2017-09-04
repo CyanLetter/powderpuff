@@ -86,8 +86,7 @@ Powderpuff.prototype.createImageObject = function(src) {
 		src: src,
 		img: new Image,
 		scale: 0.2,
-		x: 0,
-		y: 0,
+		scaleMode: "native", // cover, contain, native
 		anchor: {
 			x: 0.5, 
 			y: 0.5
@@ -155,18 +154,53 @@ Powderpuff.prototype.drawImages = function(amt) {
 	this.ctx.globalCompositeOperation = "source-over";
 	for (var i = 0; i < this.images.length; i++) {
 		var image = this.images[i];
-		var imgScale = this.scaleFromAnchor(image.img.width, image.img.height, amt * image.scale, image.anchor.x, image.anchor.y);
-		this.ctx.drawImage(image.img, image.x + imgScale.x, image.y + imgScale.y, imgScale.width, imgScale.height);
+		var initialScale = this.getInitialScale(image.img, image.scaleMode);
+		var initialPos = this.getAnchorPos(image.anchor, image.img.width * initialScale, 
+			image.img.height * initialScale);
+
+		var imgScale = this.scaleDrawable(
+			image.img.width * initialScale, 
+			image.img.height * initialScale, 
+			amt * image.scale);
+
+		console.log(imgScale.width);
+
+		this.ctx.drawImage(
+			image.img, 
+			initialPos.x + imgScale.x, 
+			initialPos.y + imgScale.y, 
+			imgScale.width, 
+			imgScale.height);
 	}
 };
 
-Powderpuff.prototype.scaleFromAnchor = function(w, h, scale, aX, aY) {
-	// return scale values that can be used in drawImage operations
-	aX = typeof aX === "undefined" ? 0.5 : aX; // default to center center
-	aY = typeof aY === "undefined" ? 0.5 : aY;
+Powderpuff.prototype.getAnchorPos = function(anchor, w, h) {
+	// get item position on canvas based on anchor point
 	return {
-		x: (scale * aX) * w * -1,
-		y: (scale * aY) * h * -1,
+		y: (anchor.y * this.canvas.height) - (anchor.y * h),
+		x: (anchor.x * this.canvas.width) - (anchor.x * w)
+	};
+};
+
+Powderpuff.prototype.getInitialScale = function(elem, mode) {
+	var scaleVal = 1;
+
+	if (mode === "native") {
+		// do nothing, scale normally
+	} else if (mode === "cover") {
+		scaleVal = Math.max(this.canvas.width / elem.width, this.canvas.height / elem.height);
+	} else if (mode === "contain") {
+		scaleVal = Math.min(this.canvas.width / elem.width, this.canvas.height / elem.height);
+	}
+
+	return scaleVal;
+};
+
+Powderpuff.prototype.scaleDrawable = function(w, h, scale) {
+	// return scale values that can be used in drawImage operations
+	return {
+		x: (scale * 0.5) * w * -1,
+		y: (scale * 0.5) * h * -1,
 		width: w + (scale * w),
 		height: h + (scale * h)
 	}
@@ -203,7 +237,7 @@ Powderpuff.prototype.update = function(timestamp) {
 		}
 		
 		// draw smoke to render canvas
-		var smokeCanvasDims = this.scaleFromAnchor(this.canvas.width, this.canvas.height, totalTime * this.smokeScale, 1 - particleTime);
+		var smokeCanvasDims = this.scaleDrawable(this.canvas.width, this.canvas.height, totalTime * this.smokeScale, 1 - particleTime);
 		
 		this.rctx.drawImage(
 			this.smokeCanvas, 
@@ -229,3 +263,24 @@ Powderpuff.prototype.update = function(timestamp) {
 
 	requestAnimationFrame(this.update);
 };
+
+
+/**
+ * Drawable Element Class for Powderpuff
+ */
+/*
+PPDrawable = function(options) {
+	options = options || {};
+
+	// bind functions
+	this.init = this.init.bind(this);
+	this.onImageLoad = this.onImageLoad.bind(this);
+	this.reveal = this.reveal.bind(this);
+	this.resize = this.resize.bind(this);
+	this.update = this.update.bind(this);
+
+	this.init(options);
+};
+PPDrawable.prototype = Object.create(Object.prototype);
+PPDrawable.prototype.constructor = PPDrawable;
+*/

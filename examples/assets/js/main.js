@@ -5,7 +5,8 @@ window.onload = function() {
 			"assets/images/title.png"
 		]
 	});
-	pp.images[1].y = 340;
+	pp.images[0].scaleMode = "cover";
+	pp.images[1].anchor.y = 1;
 
 	window.setTimeout(pp.reveal, 1000);
 }
