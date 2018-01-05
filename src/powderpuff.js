@@ -2,6 +2,16 @@
  * Main controller class for Powderpuff
  */
 
+ // Also possible - transition from transparent to solid to transparent
+
+ // container, either create own or add to existing
+ // min and max dimensions for render canvas
+ // setup and window resize function
+ // puff trigger that generates new render and smoke canvas, takes colors and puff mode as args
+ // hsl color changes
+ // modes: gradient wipe, zig zag, spiral, starbursts, random splotches
+ // possible modes: bezier path tracer, point array spot bursts - for rudimentary images
+
 Powderpuff = function(options) {
 	if (typeof options !== "object" && typeof options !== "string") {
 		console.error("Options object or image url required!");
@@ -79,6 +89,10 @@ Powderpuff.prototype.init = function(options) {
 	// mode: burst, spiral, godray
 	this.mode = typeof options.mode !== "undefined" ? options.mode : "burst";
 
+	// load smoke image
+	this.loadSmokeImage();
+	this.useSmokeImage = false;
+
 	// start loading images
 	for (var i = 0; i < this.images.length; i++) {
 		// set load callbacks
@@ -104,7 +118,8 @@ Powderpuff.prototype.createImageObject = function(src) {
 
 Powderpuff.prototype.onImageLoad = function() {
 	this.loadedImages++;
-	if (this.loadedImages === this.images.length) {
+	// add one for the smoke image
+	if (this.loadedImages === this.images.length + 1) {
 		// start
 		window.addEventListener("resize", this.requestResize);
 		this.update();
@@ -149,9 +164,28 @@ Powderpuff.prototype.drawParticles = function(amt) {
 		// add noise
 		pt.x += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
 		pt.y += Math.random() * 10 * (Math.random() > 0.5 ? 1 : -1);
-		this.sctx.beginPath();
-		this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount), 0, Math.PI * 2, false);
-		this.sctx.fill();
+
+		if (this.useSmokeImage) {
+			// pick rotation, to keep tiling from being obvious
+			var rot = Math.random() * 6.28; // random radian value
+			// translate and rotate to correct point
+			this.sctx.translate(pt.x, pt.y);
+			this.sctx.rotate(rot);
+			this.sctx.translate(-32, -32); // hard code this because smoke os a 64px png
+			// draw the smoke
+			this.sctx.drawImage(this.smokeImage, 0, 0)
+			// undo the transform
+			this.sctx.translate(32, 32);
+			this.sctx.rotate(-rot);
+			this.sctx.translate(-pt.x, -pt.y);
+		} else {
+			// just use a circle instead
+			this.sctx.beginPath();
+			this.sctx.arc(pt.x, pt.y, (this.canvas.height / this.particleCount), 0, Math.PI * 2, false);
+			this.sctx.fill();
+		}
+		
+		
 	}
 };
 
@@ -288,6 +322,13 @@ Powderpuff.prototype.update = function(timestamp) {
 	requestAnimationFrame(this.update);
 };
 
+Powderpuff.prototype.loadSmokeImage = function() {
+	this.smokeImage = new Image();
+	this.smokeImage.onload = this.onImageLoad;
+	this.smokeImage.src = "data:image/png;base64,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";
+};
+
 Powderpuff.prototype.destroy = function() {
 	window.removeEventListener("resize", this.requestResize);
 };
+
