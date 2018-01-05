@@ -1,27 +1,52 @@
 {
   "name": "powderpuff",
-  "version": "0.0.1",
-  "description": "Responsive image reveal library",
-  "main": "src/powderpuff.js",
+  "version": "0.0.2",
+  "description": "Canvas 2D smoke generation library",
+  "main": "lib/powderpuff.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --env dev && webpack --env build && npm run test",
+    "dev": "webpack --progress --colors --watch --env dev",
+    "test": "mocha --require babel-core/register --colors ./test/*.spec.js",
+    "test:watch": "mocha --require babel-core/register --colors -w ./test/*.spec.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CyanLetter/powderpuff.git"
+    "url": "https://github.com/krasimir/webpack-library-starter.git"
   },
   "keywords": [
-    "image",
-    "gallery",
+    "webpack",
+    "es6",
+    "starter",
+    "library",
+    "universal",
+    "umd",
+    "commonjs",
     "reveal",
     "animation",
     "smoke",
     "cloud"
   ],
   "author": "Dakota Ling",
+  "contributors": [
+    "Krasimir Tsonev <info@krasimirtsonev.com> (http://krasimirtsonev.com/)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/CyanLetter/powderpuff/issues"
   },
   "homepage": "https://github.com/CyanLetter/powderpuff#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.3",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
+    "eslint": "^4.13.1",
+    "eslint-loader": "^1.9.0",
+    "mocha": "^4.0.1",
+    "webpack": "^3.10.0",
+    "yargs": "^10.0.3"
+  }
 }
