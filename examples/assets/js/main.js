@@ -6,5 +6,7 @@ window.onload = function() {
 		debug: true
 	});
 
-	// window.setTimeout(pp.reveal, 1000);
+	window.setTimeout(function() {
+		pp.puff('test');
+	}, 1000);
 }

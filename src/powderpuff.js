@@ -1,4 +1,5 @@
 import Ease from './Ease.js';
+import Effect from './Effects/Effect.js'; // default effect
 
 export default class Powderpuff {
 	constructor(options) {
@@ -70,12 +71,33 @@ export default class Powderpuff {
 			this.ctx.fill();
 		}
 
+		// active effect canvases to run
+		this.activeEffects = [];
+
 		this.resize();
 		window.addEventListener('resize', e => this.resize(e));
+
+		requestAnimationFrame(e => this.update(e));
 	}
 
-	update() {
+	puff(effect, colors) {
+		let newEffect;
 
+		switch (effect) {
+		case 'test':
+			newEffect = new Effect(this);
+			this.activeEffects.push(newEffect);
+			break;
+		}
+	}
+
+	update(timestamp) {
+		for (let i = 0; i < this.activeEffects.length; i++) {
+			this.activeEffects[i].update(timestamp);
+			this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
+		}
+
+		requestAnimationFrame(e => this.update(e));
 	}
 
 	resize() {
@@ -94,7 +116,7 @@ export default class Powderpuff {
 		}
 
 		let newTransform = 'translate(-50%, -50%) scale(' + scale + ')';
-		
+
 		this.canvas.style.transform = newTransform;
 	}
 }
