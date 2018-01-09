@@ -1,4 +1,5 @@
 // Base class for smoke effects
+import Ease from '../Ease.js';
 import Particle from '../Particles/Particle.js';
 
 export default class Effect {
@@ -11,6 +12,31 @@ export default class Effect {
 
 		this.activeParticles = [];
 
+		// controls for particle canvas movement
+		// lifetime
+		this.lifetime = options.lifetime || 1000;
+		this.currentTime = 0;
+		this.isDead = false;
+
+		// position
+		this.position = {
+			x: options.xPos || 0,
+			y: options.yPos || 0
+		};
+
+		// velocity
+		this.velocity = {
+			x: options.xVelocity || 0,
+			y: options.yVelocity || 0
+		};
+
+		// scale
+		this.currentScale = options.startScale || 1;
+		this.scale = {
+			start: options.startScale || 1,
+			end: options.endScale || 1
+		};
+
 		// render canvas
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = this.canvas.height = this.parent.canvasSize;
@@ -18,7 +44,7 @@ export default class Effect {
 		// particle canvas
 		this.pCanvas = document.createElement('canvas');
 		this.pCanvas.width = this.pCanvas.height = this.parent.canvasSize;
-		this.pctx = this.canvas.getContext("2d");
+		this.pctx = this.pCanvas.getContext("2d");
 
 		this.init();
 	}
@@ -26,12 +52,16 @@ export default class Effect {
 	init () {
 		for (let i =0; i < 50; i++) {
 			let newParticle = new Particle(this.pctx, {
-				xPos: this.canvas.width / 2,
-				yPos: this.canvas.width / 2,
+				lifetime: 1000,
+				size: 50,
+				xPos: (this.parent.canvasSize / 2) - 40 + (Math.random() * 80),
+				yPos: (this.parent.canvasSize / 2) - 40 + (Math.random() * 80),
 				xVelocity: -20 + (Math.random() * 40),
 				yVelocity: -20 + (Math.random() * 40),
-				yForce: 0.4,
-				drag: 0.02
+				drag: 0.02,
+				startColor: 'hsla(' + (-20 + i) + ', 80%, 50%, 0.01)',
+				noiseType: 'random',
+				noiseAmount: 10 
 			});
 			this.activeParticles.push(newParticle);
 		}
@@ -47,6 +77,12 @@ export default class Effect {
 		let timeScale = dt / this.tick;
 
 		this.lastTime = timestamp;
+		this.currentTime += dt;
+		this.percentComplete = this.currentTime / this.lifetime;
+		if (this.percentComplete >= 1) {
+			this.percentComplete = 1;
+			this.isDead = true;
+		}
 
 		for (let i = this.activeParticles.length - 1; i >= 0; i--) {
 			if (this.activeParticles[i].isDead) {
@@ -55,10 +91,24 @@ export default class Effect {
 			} else {
 				this.activeParticles[i].update(dt, timeScale);
 			}
-			
-			// check for destroy
 		}
 
-		this.ctx.drawImage(this.pCanvas, 0, 0);
+		// update canvas positions
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
+		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
+		let canvasDims = this.scaleDrawable(this.canvas.width, this.canvas.height, this.currentScale);
+
+		this.ctx.drawImage(this.pCanvas, canvasDims.x + this.position.x, canvasDims.y + this.position.y, canvasDims.width, canvasDims.height);
+	}
+
+	scaleDrawable (w, h, scale) {
+		// return scale values that can be used in drawImage operations
+		return {
+			x: ((scale * w) - w) * -0.5,
+			y: ((scale * h) - h) * -0.5,
+			width: scale * w,
+			height: scale * h
+		}
 	}
 }

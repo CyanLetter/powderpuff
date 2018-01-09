@@ -1,5 +1,6 @@
 // Base class for smoke particles
 import Ease from '../Ease.js';
+import Noise from '../Noise.js';
 
 export default class Particle {
 	constructor(context, options) {
@@ -23,7 +24,7 @@ export default class Particle {
 
 		// velocity
 		this.velocity = {
-			x: options.xVelocity || 10,
+			x: options.xVelocity || 0,
 			y: options.yVelocity || 0
 		};
 
@@ -40,12 +41,14 @@ export default class Particle {
 		this.drag = options.drag || 0;
 
 		this.currentColor = options.startColor || 'hsla(0, 100%, 50%, 0.01)';
+
+		// TODO: Implement color fade
 		this.color = {
 			start: options.startColor || '#ff0000',
 			end: options.endColor || '#ff0000'
 		};
 
-		// not using this right now
+		// TODO: Implement particle rotation
 		this.rotation = {
 			start: options.startRotation || 0,
 			end: options.endRotation || 6.28 // 2 radians
@@ -57,14 +60,30 @@ export default class Particle {
 			end: options.endScale || 0
 		};
 
+		this.noiseType = options.noiseType || 'none';
+		this.noiseAmount = options.noiseAmount || 0;
+
 		this.draw();
 	}
 
 	draw () {
 		this.ctx.fillStyle = this.currentColor;
 		this.ctx.beginPath();
-		this.ctx.arc(this.position.x, this.position.y, this.size * this.currentScale, 0, Math.PI * 2, false);
+		this.ctx.arc(this.position.x, this.position.y, this.size * this.currentScale, 0, 6.28, false);
 		this.ctx.fill();
+	}
+
+	applyNoise() {
+		switch (this.noiseType) {
+			case 'none':
+				// do nothing
+			break;
+			case 'random':
+				let newNoise = Noise.random(this.noiseAmount);
+				this.position.x += newNoise.x;
+				this.position.y += newNoise.y;
+			break;
+		}
 	}
 
 	update (dt, timeScale, noise) {
@@ -75,6 +94,8 @@ export default class Particle {
 			this.isDead = true;
 		}
 
+		noise = noise || {x: 0, y: 0};
+
 		// update velocity
 		this.velocity.x += this.force.x * timeScale;
 		this.velocity.x *= 1 - (this.drag * timeScale);
@@ -82,8 +103,10 @@ export default class Particle {
 		this.velocity.y *= 1 - (this.drag * timeScale);
 
 		// update position
-		this.position.x += this.velocity.x;
-		this.position.y += this.velocity.y;
+		this.position.x += this.velocity.x + noise.x;
+		this.position.y += this.velocity.y + noise.y;
+
+		this.applyNoise();
 
 		// update color and scale
 		// this.currentColor = Ease.lerp(this.color.start, this.color.end, this.percentComplete);

@@ -1,5 +1,6 @@
 import Ease from './Ease.js';
 import Effect from './Effects/Effect.js'; // default effect
+import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 
 export default class Powderpuff {
 	constructor(options) {
@@ -8,7 +9,7 @@ export default class Powderpuff {
 		this.container = options.container;
 
 		// dimensions of the canvas to create. Canvas is always a square for now
-		this.canvasSize = options.canvasSize || 2000;
+		this.canvasSize = options.canvasSize || 1024;
 
 		this.debug = options.debug;
 
@@ -21,7 +22,12 @@ export default class Powderpuff {
 		if (typeof this.container === 'undefined') {
 			// generate our own container
 			this.container = document.createElement('div');
-			this.container.style = 'position: fixed; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden;';
+			this.container.style.position = 'fixed';
+			this.container.style.top = '0';
+			this.container.style.right = '0';
+			this.container.style.bottom = '0';
+			this.container.style.left = '0';
+			this.container.style.overflow = 'hidden';
 
 			document.body.insertBefore(this.container, document.body.firstChild);
 		}
@@ -29,7 +35,9 @@ export default class Powderpuff {
 		// create our canvas
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = this.canvas.height = this.canvasSize;
-		this.canvas.style = 'position: absolute; top: 50%; left: 50%;';
+		this.canvas.style.position = 'absolute';
+		this.canvas.style.top = '50%';
+		this.canvas.style.left = '50%';
 		this.container.appendChild(this.canvas);
 
 		// get main canvas context
@@ -42,12 +50,12 @@ export default class Powderpuff {
 
 			this.ctx.beginPath();
 			this.ctx.moveTo(50, 50);
-			this.ctx.lineTo(1950, 1950);
+			this.ctx.lineTo(this.canvasSize - 50, this.canvasSize - 50);
 			this.ctx.stroke();
 
 			this.ctx.beginPath();
-			this.ctx.moveTo(1950, 50);
-			this.ctx.lineTo(50, 1950);
+			this.ctx.moveTo(this.canvasSize - 50, 50);
+			this.ctx.lineTo(50, this.canvasSize - 50);
 			this.ctx.stroke();
 			// tl
 			this.ctx.beginPath();
@@ -85,16 +93,32 @@ export default class Powderpuff {
 
 		switch (effect) {
 		case 'test':
-			newEffect = new Effect(this);
+			newEffect = new Effect(this, {
+				lifetime: 1000,
+				endScale: 1.2
+			});
+			this.activeEffects.push(newEffect);
+			break;
+		case 'flak':
+			newEffect = new PrismaFlak(this, {
+				lifetime: 5000,
+				endScale: 1.2
+			});
 			this.activeEffects.push(newEffect);
 			break;
 		}
 	}
 
 	update(timestamp) {
-		for (let i = 0; i < this.activeEffects.length; i++) {
-			this.activeEffects[i].update(timestamp);
-			this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
+		for (let i = this.activeEffects.length - 1; i >= 0; i--) {
+			if (this.activeEffects[i].isDead) {
+				this.activeEffects[i] = null;
+				this.activeEffects.splice(i, 1);
+			} else {
+				this.activeEffects[i].update(timestamp);
+				this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
+			}
+			
 		}
 
 		requestAnimationFrame(e => this.update(e));
