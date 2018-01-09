@@ -61,7 +61,7 @@ export default class Particle {
 
 	}
 
-	move (timeScale, noise) {
+	move(timeScale, noise) {
 		
 		// update velocity
 		this.velocity.x += this.force.x * timeScale;
@@ -82,7 +82,7 @@ export default class Particle {
 		this.draw();
 	}
 
-	draw () {
+	draw() {
 		this.ctx.fillStyle = this.currentColor;
 		this.ctx.beginPath();
 		this.ctx.arc(this.position.x, this.position.y, this.size * this.currentScale, 0, 6.28, false);
@@ -91,18 +91,19 @@ export default class Particle {
 
 	applyNoise() {
 		switch (this.noiseType) {
-			case 'none':
-				// do nothing
+		case 'none':
+			// do nothing
 			break;
-			case 'random':
-				let newNoise = Noise.random(this.noiseAmount);
-				this.position.x += newNoise.x;
-				this.position.y += newNoise.y;
+		case 'random':
+			let newNoise = Noise.random(this.noiseAmount);
+			
+			this.position.x += newNoise.x;
+			this.position.y += newNoise.y;
 			break;
 		}
 	}
 
-	update (dt, timeScale, noise) {
+	update(dt, timeScale, noise) {
 		this.currentTime += dt;
 		this.percentComplete = this.currentTime / this.lifetime;
 		if (this.percentComplete >= 1) {

@@ -7,7 +7,7 @@ export default class WispTest extends Effect {
 		super(parent, options);
 	}
 
-	init () {
+	init() {
 		let newParticle = new Wisp(this.pctx, {
 			lifetime: 5000,
 			size: 50,

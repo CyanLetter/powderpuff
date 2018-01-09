@@ -1,10 +1,9 @@
 import Ease from './Ease.js';
 
 export default class Color {
-	constructor (startColor, endColor) {
+	constructor(startColor, endColor) {
 		// assume same format for start and end colors
 		this.colorType = this.getColorType(startColor);
-
 		this.startColor = this.decomposeColor(startColor);
 		this.endColor = this.decomposeColor(endColor);
 	}
@@ -17,6 +16,7 @@ export default class Color {
 			z: Ease.lerp(this.startColor.z, this.endColor.z, t),
 			a: Ease.lerp(this.startColor.a, this.endColor.a, t)
 		};
+
 		// console.log(lerpColor);
 		lerpColor = this.recomposeColor(lerpColor);
 
@@ -35,29 +35,33 @@ export default class Color {
 			y: decomposed[2],
 			z: decomposed[3],
 			a: decomposed[4]
-		}
+		};
 	}
 
 	recomposeColor(color) {
 		switch (this.colorType) {
-			case 'hex':
-				// TODO: Handle Hex
-				return '#ff0000';
-			case 'rgba':
-				return 'rgba(' + color.x + ', ' + color.y + ', ' + color.z + ', ' + color.a + ')';
-			case 'hsl':
-				return 'hsla(' + color.x + ', ' + color.y + '%, ' + color.z + '%, ' + color.a + ')';
+		case 'hex':
+			// TODO: Handle Hex
+			return '#ff0000';
+		case 'rgba':
+			return 'rgba(' + color.x + ', ' + color.y + ', ' + color.z + ', ' + color.a + ')';
+		case 'hsl':
+			return 'hsla(' + color.x + ', ' + color.y + '%, ' + color.z + '%, ' + color.a + ')';
+		default:
+			return null;
 		}
 	}
 
 	getColorType(color) {
 		switch (color[0]) {
-			case '#':
-				return 'hex';
-			case 'r':
-				return 'rgba';
-			case 'h':
-				return 'hsl';
+		case '#':
+			return 'hex';
+		case 'r':
+			return 'rgba';
+		case 'h':
+			return 'hsl';
+		default:
+			return null;
 		}
 	}
 }

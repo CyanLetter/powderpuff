@@ -2,7 +2,6 @@
 import Particle from './Particle.js';
 import Ease from '../Ease.js';
 import Noise from '../Noise.js';
-import Color from '../Color.js';
 
 export default class Wisp extends Particle {
 	constructor(context, options) {
@@ -35,7 +34,7 @@ export default class Wisp extends Particle {
 		};
 	}
 
-	move (timeScale, noise) {
+	move(timeScale, noise) {
 		// update velocity
 		this.velocity.x += this.force.x * timeScale;
 		this.velocity.x *= 1 - (this.drag * timeScale);
@@ -57,10 +56,11 @@ export default class Wisp extends Particle {
 		this.draw();
 	}
 
-	draw () {
+	draw() {
 		// console.log(this.tailPos.x);
 		this.ctx.strokeStyle = this.currentColor;
 		this.ctx.lineWidth = this.thickness;
+		this.ctx.lineCap = 'round';
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.tailPos.x, this.tailPos.y);
 		this.ctx.lineTo(this.position.x, this.position.y);
@@ -69,27 +69,29 @@ export default class Wisp extends Particle {
 
 	applyNoise() {
 		switch (this.noiseType) {
-			case 'none':
-				// do nothing
+		case 'none':
+			// do nothing
 			break;
-			case 'random':
-				let newNoise = Noise.random(this.noiseAmount);
-				this.position.x += newNoise.x;
-				this.position.y += newNoise.y;
+		case 'random':
+			let newNoise = Noise.random(this.noiseAmount);
 
-				let newNoise2 = Noise.random(this.noiseAmount);
-				this.tailPos.x += newNoise2.x;
-				this.tailPos.y += newNoise2.y;
+			this.position.x += newNoise.x;
+			this.position.y += newNoise.y;
+
+			let newNoise2 = Noise.random(this.noiseAmount);
+
+			this.tailPos.x += newNoise2.x;
+			this.tailPos.y += newNoise2.y;
 			break;
-			case 'wave':
-				this.currentWavePos.head += this.frequency.head;
-				this.currentWavePos.tail += this.frequency.tail;
+		case 'wave':
+			this.currentWavePos.head += this.frequency.head;
+			this.currentWavePos.tail += this.frequency.tail;
 
-				this.position.x += Math.sin(this.currentWavePos.head) * this.amplitude.head;
-				this.position.y += Math.cos(this.currentWavePos.head) * this.amplitude.head;
+			this.position.x += Math.sin(this.currentWavePos.head) * this.amplitude.head;
+			this.position.y += Math.cos(this.currentWavePos.head) * this.amplitude.head;
 
-				this.tailPos.x += Math.cos(this.currentWavePos.tail) * this.amplitude.tail;
-				this.tailPos.y += Math.sin(this.currentWavePos.tail) * this.amplitude.tail;
+			this.tailPos.x += Math.cos(this.currentWavePos.tail) * this.amplitude.tail;
+			this.tailPos.y += Math.sin(this.currentWavePos.tail) * this.amplitude.tail;
 			break;
 		}
 	}

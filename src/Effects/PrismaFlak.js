@@ -7,18 +7,18 @@ export default class PrismaFlak extends Effect {
 		super(parent, options);
 	}
 
-	init () {
+	init() {
 		this.interval = setInterval(() => this.burst(), 100);
 
 		setTimeout(() => this.end(), 3000);
 	}
 
-	burst () {
+	burst() {
 		let centerX = Math.random() * this.canvas.width;
 		let centerY = Math.random() * this.canvas.width;
 		let initialColor = Math.floor(Math.random() * 360);
 
-		for (let i =0; i < 50; i++) {
+		for (let i = 0; i < 50; i++) {
 			let newParticle = new Particle(this.pctx, {
 				lifetime: 500,
 				size: 50,
@@ -32,11 +32,12 @@ export default class PrismaFlak extends Effect {
 				noiseType: 'random',
 				noiseAmount: 10 
 			});
+
 			this.activeParticles.push(newParticle);
 		}
 	}
 
-	end () {
+	end() {
 		clearInterval(this.interval);
 	}
 

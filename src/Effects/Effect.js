@@ -40,17 +40,17 @@ export default class Effect {
 		// render canvas
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = this.canvas.height = this.parent.canvasSize;
-		this.ctx = this.canvas.getContext("2d");
+		this.ctx = this.canvas.getContext('2d');
 		// particle canvas
 		this.pCanvas = document.createElement('canvas');
 		this.pCanvas.width = this.pCanvas.height = this.parent.canvasSize;
-		this.pctx = this.pCanvas.getContext("2d");
+		this.pctx = this.pCanvas.getContext('2d');
 
 		this.init();
 	}
 
-	init () {
-		for (let i =0; i < 50; i++) {
+	init() {
+		for (let i = 0; i < 50; i++) {
 			let newParticle = new Particle(this.pctx, {
 				lifetime: 1000,
 				size: 50,
@@ -64,11 +64,12 @@ export default class Effect {
 				noiseType: 'random',
 				noiseAmount: 10 
 			});
+
 			this.activeParticles.push(newParticle);
 		}
 	}
 
-	update (timestamp) {
+	update(timestamp) {
 		if (!this.startTime) {
 			this.startTime = timestamp;
 			this.lastTime = timestamp;
@@ -104,13 +105,13 @@ export default class Effect {
 		this.ctx.drawImage(this.pCanvas, canvasDims.x + this.position.x, canvasDims.y + this.position.y, canvasDims.width, canvasDims.height);
 	}
 
-	scaleDrawable (w, h, scale) {
+	scaleDrawable(w, h, scale) {
 		// return scale values that can be used in drawImage operations
 		return {
 			x: ((scale * w) - w) * -0.5,
 			y: ((scale * h) - h) * -0.5,
 			width: scale * w,
 			height: scale * h
-		}
+		};
 	}
 }
