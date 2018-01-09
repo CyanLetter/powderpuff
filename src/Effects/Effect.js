@@ -96,7 +96,7 @@ export default class Effect {
 		// update canvas positions
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
-		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
+		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete, Ease.easeOutQuad);
 		let canvasDims = this.scaleDrawable(this.canvas.width, this.canvas.height, this.currentScale);
 
 		this.ctx.drawImage(this.pCanvas, canvasDims.x + this.position.x, canvasDims.y + this.position.y, canvasDims.width, canvasDims.height);
