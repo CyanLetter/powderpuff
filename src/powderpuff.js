@@ -110,15 +110,17 @@ export default class Powderpuff {
 	}
 
 	update(timestamp) {
+		// update effects
+		for (let i = 0; i < this.activeEffects.length; i++) {
+			this.activeEffects[i].update(timestamp);
+			this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
+		}
+		// remove dead effects
 		for (let i = this.activeEffects.length - 1; i >= 0; i--) {
 			if (this.activeEffects[i].isDead) {
 				this.activeEffects[i] = null;
 				this.activeEffects.splice(i, 1);
-			} else {
-				this.activeEffects[i].update(timestamp);
-				this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
 			}
-			
 		}
 
 		requestAnimationFrame(e => this.update(e));
