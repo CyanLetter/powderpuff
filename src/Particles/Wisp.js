@@ -51,14 +51,14 @@ export default class Wisp extends Particle {
 		this.applyNoise();
 
 		// update color and scale
-		this.currentColor = Color.lerp(this.color.start, this.color.end, this.percentComplete);
+		this.currentColor = this.color.lerp(this.percentComplete);
 		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
 
 		this.draw();
 	}
 
 	draw () {
-		console.log(this.tailPos.x);
+		// console.log(this.tailPos.x);
 		this.ctx.strokeStyle = this.currentColor;
 		this.ctx.lineWidth = this.thickness;
 		this.ctx.beginPath();

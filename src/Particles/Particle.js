@@ -41,11 +41,8 @@ export default class Particle {
 		// drag
 		this.drag = options.drag || 0;
 
-		this.color = {
-			start: options.startColor || 'hsla(0, 100%, 50%, 0.01)',
-			end: options.endColor || 'hsla(0, 100%, 50%, 0.01)'
-		};
-		this.currentColor = this.color.start;
+		this.color = new Color(options.startColor || 'hsla(0, 100%, 50%, 0.01)', options.endColor || 'hsla(0, 100%, 50%, 0.01)');
+		this.currentColor = this.color.lerp(0);
 
 		// TODO: Implement particle rotation
 		this.rotation = {
@@ -79,7 +76,7 @@ export default class Particle {
 		this.applyNoise();
 
 		// update color and scale
-		this.currentColor = Color.lerp(this.color.start, this.color.end, this.percentComplete);
+		this.currentColor = this.color.lerp(this.percentComplete);
 		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
 
 		this.draw();

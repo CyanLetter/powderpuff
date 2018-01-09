@@ -1,28 +1,31 @@
 import Ease from './Ease.js';
 
 export default class Color {
-	static lerp(startColor, endColor, t) {
-		let startColorType = this.getColorType(startColor);
-		let endColorType = this.getColorType(endColor);
+	constructor (startColor, endColor) {
+		// assume same format for start and end colors
+		this.colorType = this.getColorType(startColor);
 
-		startColor = this.decomposeColor(startColor, startColorType);
-		endColor = this.decomposeColor(endColor, endColorType);
+		this.startColor = this.decomposeColor(startColor);
+		this.endColor = this.decomposeColor(endColor);
+	}
+
+	lerp(t) {
 
 		let lerpColor = {
-			x: Ease.lerp(startColor.x, endColor.x, t),
-			y: Ease.lerp(startColor.y, endColor.y, t),
-			z: Ease.lerp(startColor.z, endColor.z, t),
-			a: Ease.lerp(startColor.a, endColor.a, t)
+			x: Ease.lerp(this.startColor.x, this.endColor.x, t),
+			y: Ease.lerp(this.startColor.y, this.endColor.y, t),
+			z: Ease.lerp(this.startColor.z, this.endColor.z, t),
+			a: Ease.lerp(this.startColor.a, this.endColor.a, t)
 		};
 		// console.log(lerpColor);
-		lerpColor = this.recomposeColor(lerpColor, startColorType);
+		lerpColor = this.recomposeColor(lerpColor);
 
 		return lerpColor;
 	}
 
 	// extract values from both rgba and hsla
 	// always convert to individual generic xyza values
-	static decomposeColor(color) {
+	decomposeColor(color) {
 		let colorRegex = new RegExp(/\((-?\d\d?\d?),\s?(\d\d?\d?)%?,\s?(\d\d?\d?)%?,\s?(\d\.?\d?\d?\d?)\)/, 'i');
 		let decomposed = color.match(colorRegex);
 		// console.log(decomposed);
@@ -35,8 +38,8 @@ export default class Color {
 		}
 	}
 
-	static recomposeColor(color, type) {
-		switch (type) {
+	recomposeColor(color) {
+		switch (this.colorType) {
 			case 'hex':
 				// TODO: Handle Hex
 				return '#ff0000';
@@ -47,7 +50,7 @@ export default class Color {
 		}
 	}
 
-	static getColorType(color) {
+	getColorType(color) {
 		switch (color[0]) {
 			case '#':
 				return 'hex';
