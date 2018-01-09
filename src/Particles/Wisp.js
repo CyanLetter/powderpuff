@@ -2,7 +2,7 @@
 import Particle from './Particle.js';
 import Ease from '../Ease.js';
 import Noise from '../Noise.js';
-
+import Color from '../Color.js';
 
 export default class Wisp extends Particle {
 	constructor(context, options) {
@@ -51,7 +51,7 @@ export default class Wisp extends Particle {
 		this.applyNoise();
 
 		// update color and scale
-		// this.currentColor = Ease.lerp(this.color.start, this.color.end, this.percentComplete);
+		this.currentColor = Color.lerp(this.color.start, this.color.end, this.percentComplete);
 		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
 
 		this.draw();

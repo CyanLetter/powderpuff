@@ -17,6 +17,7 @@ export default class WispTest extends Effect {
 			yVelocity: -3,
 			startRotation: 6.28 * 0.88,
 			startColor: 'hsla(' + 0 + ', 50%, 50%, 0.008)',
+			endColor: 'hsla(' + 100 + ', 50%, 50%, 0.008)',
 			noiseType: 'wave',
 			noiseAmount: 10,
 			length: 100,

@@ -1,6 +1,7 @@
 // Base class for smoke particles
 import Ease from '../Ease.js';
 import Noise from '../Noise.js';
+import Color from '../Color.js';
 
 export default class Particle {
 	constructor(context, options) {
@@ -40,13 +41,11 @@ export default class Particle {
 		// drag
 		this.drag = options.drag || 0;
 
-		this.currentColor = options.startColor || 'hsla(0, 100%, 50%, 0.01)';
-
-		// TODO: Implement color fade
 		this.color = {
-			start: options.startColor || '#ff0000',
-			end: options.endColor || '#ff0000'
+			start: options.startColor || 'hsla(0, 100%, 50%, 0.01)',
+			end: options.endColor || 'hsla(0, 100%, 50%, 0.01)'
 		};
+		this.currentColor = this.color.start;
 
 		// TODO: Implement particle rotation
 		this.rotation = {
@@ -80,7 +79,7 @@ export default class Particle {
 		this.applyNoise();
 
 		// update color and scale
-		// this.currentColor = Ease.lerp(this.color.start, this.color.end, this.percentComplete);
+		this.currentColor = Color.lerp(this.color.start, this.color.end, this.percentComplete);
 		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
 
 		this.draw();

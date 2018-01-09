@@ -1,4 +1,3 @@
-import Ease from './Ease.js';
 import Effect from './Effects/Effect.js'; // default effect
 import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 import WispTest from './Effects/WispTest.js'; // Wisp default effect

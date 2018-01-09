@@ -60,6 +60,7 @@ export default class Effect {
 				yVelocity: -20 + (Math.random() * 40),
 				drag: 0.02,
 				startColor: 'hsla(' + (-20 + i) + ', 80%, 50%, 0.01)',
+				endColor: 'hsla(' + (30 + i) + ', 80%, 50%, 0.01)',
 				noiseType: 'random',
 				noiseAmount: 10 
 			});
