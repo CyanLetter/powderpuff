@@ -8,6 +8,6 @@ window.onload = function() {
 	});
 
 	window.setTimeout(function() {
-		pp.puff('flak');
+		pp.puff('wispTest');
 	}, 1000);
 }

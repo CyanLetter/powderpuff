@@ -84,6 +84,7 @@ export default class Effect {
 			this.isDead = true;
 		}
 
+		// console.log(this.activeParticles.length);
 		for (let i = this.activeParticles.length - 1; i >= 0; i--) {
 			if (this.activeParticles[i].isDead) {
 				this.activeParticles[i] = null;

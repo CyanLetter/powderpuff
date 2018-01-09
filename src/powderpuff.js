@@ -1,6 +1,7 @@
 import Ease from './Ease.js';
 import Effect from './Effects/Effect.js'; // default effect
 import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
+import WispTest from './Effects/WispTest.js'; // Wisp default effect
 
 export default class Powderpuff {
 	constructor(options) {
@@ -97,16 +98,23 @@ export default class Powderpuff {
 				lifetime: 1000,
 				endScale: 1.2
 			});
-			this.activeEffects.push(newEffect);
+			break;
+		case 'wispTest':
+			newEffect = new WispTest(this, {
+				lifetime: 5000,
+				endScale: 2
+			});
 			break;
 		case 'flak':
 			newEffect = new PrismaFlak(this, {
 				lifetime: 5000,
 				endScale: 1.2
 			});
-			this.activeEffects.push(newEffect);
+			
 			break;
 		}
+
+		this.activeEffects.push(newEffect);
 	}
 
 	update(timestamp) {

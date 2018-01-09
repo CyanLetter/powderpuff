@@ -63,6 +63,26 @@ export default class Particle {
 		this.noiseType = options.noiseType || 'none';
 		this.noiseAmount = options.noiseAmount || 0;
 
+	}
+
+	move (timeScale, noise) {
+		
+		// update velocity
+		this.velocity.x += this.force.x * timeScale;
+		this.velocity.x *= 1 - (this.drag * timeScale);
+		this.velocity.y += this.force.y * timeScale;
+		this.velocity.y *= 1 - (this.drag * timeScale);
+
+		// update position
+		this.position.x += this.velocity.x + noise.x;
+		this.position.y += this.velocity.y + noise.y;
+
+		this.applyNoise();
+
+		// update color and scale
+		// this.currentColor = Ease.lerp(this.color.start, this.color.end, this.percentComplete);
+		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
+
 		this.draw();
 	}
 
@@ -93,25 +113,8 @@ export default class Particle {
 			this.percentComplete = 1;
 			this.isDead = true;
 		}
-
 		noise = noise || {x: 0, y: 0};
 
-		// update velocity
-		this.velocity.x += this.force.x * timeScale;
-		this.velocity.x *= 1 - (this.drag * timeScale);
-		this.velocity.y += this.force.y * timeScale;
-		this.velocity.y *= 1 - (this.drag * timeScale);
-
-		// update position
-		this.position.x += this.velocity.x + noise.x;
-		this.position.y += this.velocity.y + noise.y;
-
-		this.applyNoise();
-
-		// update color and scale
-		// this.currentColor = Ease.lerp(this.color.start, this.color.end, this.percentComplete);
-		this.currentScale = Ease.lerp(this.scale.start, this.scale.end, this.percentComplete);
-
-		this.draw();
+		this.move(timeScale, noise);
 	}
 }
