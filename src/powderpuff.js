@@ -1,6 +1,7 @@
 import Effect from './Effects/Effect.js'; // default effect
 import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 import WispTest from './Effects/WispTest.js'; // Wisp default effect
+import FastBlur from './FastBlur.js';
 
 export default class Powderpuff {
 	constructor(options) {
@@ -42,6 +43,8 @@ export default class Powderpuff {
 
 		// get main canvas context
 		this.ctx = this.canvas.getContext('2d');
+		this.ctx.fillStyle = '#ffffff';
+		this.ctx.fillRect(0, 0, this.canvasSize, this.canvasSize);
 
 		// add registration marks for debugging
 		if (this.debug === true) {
@@ -94,8 +97,8 @@ export default class Powderpuff {
 		switch (effect) {
 		case 'test':
 			newEffect = new Effect(this, {
-				lifetime: 1000,
-				endScale: 1.2
+				lifetime: 3000,
+				endScale: 1.5
 			});
 			break;
 		case 'wispTest':
@@ -122,6 +125,11 @@ export default class Powderpuff {
 			this.activeEffects[i].update(timestamp);
 			this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
 		}
+
+		if (this.activeEffects.length > 0) {
+			FastBlur.extremeFractalBlur(this.canvas, this.ctx, 4);
+		}
+
 		// remove dead effects
 		for (let i = this.activeEffects.length - 1; i >= 0; i--) {
 			if (this.activeEffects[i].isDead) {

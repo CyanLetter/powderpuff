@@ -29,4 +29,10 @@ export default class WispTest extends Effect {
 		this.activeParticles.push(newParticle);
 	}
 
+	update(timestamp) {
+		super.update(timestamp);
+
+		// FastBlur.boxBlurCanvasRGBA(this.ctx, 0, 0, this.parent.canvasSize, this.parent.canvasSize, 5, 1);
+		// FastBlur.extremeFractalBlur(this.canvas, this.ctx, 4);
+	}
 }

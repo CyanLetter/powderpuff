@@ -1,4 +1,4 @@
-// wispy tendril particle
+// wispy tendril particle, inspired by Mustafa: https://codepen.io/shadowman86/pen/EDBiC?page=3
 import Particle from './Particle.js';
 import Ease from '../Ease.js';
 import Noise from '../Noise.js';
