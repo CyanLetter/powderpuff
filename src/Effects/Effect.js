@@ -1,7 +1,7 @@
 // Base class for smoke effects
 import Ease from '../Ease.js';
 import Particle from '../Particles/Particle.js';
-import FastBlur from '../FastBlur.js';
+// import FastBlur from '../FastBlur.js';
 
 export default class Effect {
 	constructor(parent, options) {

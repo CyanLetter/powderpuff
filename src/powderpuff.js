@@ -3,6 +3,7 @@ import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 import WispTest from './Effects/WispTest.js'; // Wisp default effect
 import Ribbons from './Effects/Ribbons.js'; // Wisp ribbon effect
 import FastBlur from './FastBlur.js';
+import Utilities from './Utilities.js';
 import {ColorThemes} from './Color.js';
 
 export default class Powderpuff {
@@ -108,6 +109,7 @@ export default class Powderpuff {
 		if (typeof theme === 'undefined') {
 			theme = this.themes.meteor;
 		}
+		Utilities.shuffle(theme);
 
 		switch (effect) {
 		case 'test':

@@ -5,4 +5,8 @@ export default class Noise {
 			y: -amount + (Math.random() * (amount * 2))
 		};
 	}
+
+	// perlin
+
+	//brownian
 }
