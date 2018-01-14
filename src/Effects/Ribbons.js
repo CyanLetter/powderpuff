@@ -1,30 +1,35 @@
-// Wisp Particle test effect
+// Wisps flying across screen
 import Effect from './Effect.js';
 import Wisp from '../Particles/Wisp.js';
 
-export default class WispTest extends Effect {
+export default class Ribbons extends Effect {
 	constructor(parent, options) {
 		super(parent, options);
 	}
 
 	init() {
-		let randColor = this.theme[Math.floor(Math.random() * this.theme.length)];
+		this.makeWisp(0);
+		setTimeout(() => this.makeWisp(1), 200);
+		setTimeout(() => this.makeWisp(2), 400);
+	}
+
+	makeWisp(num) {
 		let newParticle = new Wisp(this.pctx, {
-			lifetime: 5000,
+			lifetime: 1500,
 			size: 50,
 			xPos: 0,
-			yPos: this.parent.canvasSize / 2,
-			xVelocity: 3,
+			yPos: (this.parent.canvasSize / 4) * (num + 1),
+			xVelocity: 15,
 			// yVelocity: -3,
 			startRotation: 6.28 * 0.75,
-			startColor: randColor.start,
-			endColor: randColor.end,
+			startColor: this.theme[num].start,
+			endColor: this.theme[num].end,
 			noiseType: 'wave',
 			noiseAmount: 10,
 			length: 100,
 			thickness: 10,
 			tailFreq: 0.05,
-			tailAmp: 3
+			tailAmp: 1
 		});
 
 		this.activeParticles.push(newParticle);

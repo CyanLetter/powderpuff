@@ -1,7 +1,9 @@
 import Effect from './Effects/Effect.js'; // default effect
 import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 import WispTest from './Effects/WispTest.js'; // Wisp default effect
+import Ribbons from './Effects/Ribbons.js'; // Wisp ribbon effect
 import FastBlur from './FastBlur.js';
+import {ColorThemes} from './Color.js';
 
 export default class Powderpuff {
 	constructor(options) {
@@ -12,7 +14,15 @@ export default class Powderpuff {
 		// dimensions of the canvas to create. Canvas is always a square for now
 		this.canvasSize = options.canvasSize || 1024;
 
+		this.framerate = options.framerate || 60;
+		this.tickrate = 1000 / this.framerate;
+		this.currentDt = 0;
+
 		this.debug = options.debug;
+
+		this.themes = ColorThemes;
+
+		console.log(this.themes.meteor);
 
 		this.init();
 	}
@@ -45,6 +55,7 @@ export default class Powderpuff {
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.fillStyle = '#ffffff';
 		this.ctx.fillRect(0, 0, this.canvasSize, this.canvasSize);
+		// this.ctx.globalCompositeOperation = 'multiply';
 
 		// add registration marks for debugging
 		if (this.debug === true) {
@@ -91,26 +102,41 @@ export default class Powderpuff {
 		requestAnimationFrame(e => this.update(e));
 	}
 
-	puff(effect, colors) {
+	puff(effect, theme) {
 		let newEffect;
+
+		if (typeof theme === 'undefined') {
+			theme = this.themes.meteor;
+		}
 
 		switch (effect) {
 		case 'test':
 			newEffect = new Effect(this, {
 				lifetime: 3000,
-				endScale: 1.5
+				endScale: 1.5,
+				theme: theme
 			});
 			break;
 		case 'wispTest':
 			newEffect = new WispTest(this, {
-				lifetime: 5000,
-				endScale: 2
+				lifetime: 7000,
+				endScale: 2,
+				theme: theme
 			});
 			break;
 		case 'flak':
+			// ignores themes
 			newEffect = new PrismaFlak(this, {
 				lifetime: 5000,
 				endScale: 1.2
+			});
+			
+			break;
+		case 'ribbons':
+			newEffect = new Ribbons(this, {
+				lifetime: 8000,
+				endScale: 2,
+				theme: theme
 			});
 			
 			break;
@@ -120,9 +146,17 @@ export default class Powderpuff {
 	}
 
 	update(timestamp) {
+		if (!this.lastTime) {
+			this.lastTime = timestamp;
+		}
+		
+		// this.currentDt += (timestamp - this.lastTime);
+		// console.log('delta: ' + (timestamp - this.lastTime) + 'dt: ' + this.currentDt);
+		// this.currentDt -= this.tickrate;
+		
 		// update effects
 		for (let i = 0; i < this.activeEffects.length; i++) {
-			this.activeEffects[i].update(timestamp);
+			this.activeEffects[i].update(this.tickrate);
 			this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
 		}
 
@@ -137,7 +171,8 @@ export default class Powderpuff {
 				this.activeEffects.splice(i, 1);
 			}
 		}
-
+		
+		this.lastTime = timestamp;
 		requestAnimationFrame(e => this.update(e));
 	}
 

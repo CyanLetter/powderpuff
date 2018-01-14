@@ -34,12 +34,12 @@ export default class Wisp extends Particle {
 		};
 	}
 
-	move(timeScale, noise) {
+	move(noise) {
 		// update velocity
-		this.velocity.x += this.force.x * timeScale;
-		this.velocity.x *= 1 - (this.drag * timeScale);
-		this.velocity.y += this.force.y * timeScale;
-		this.velocity.y *= 1 - (this.drag * timeScale);
+		this.velocity.x += this.force.x;
+		this.velocity.x *= 1 - (this.drag);
+		this.velocity.y += this.force.y;
+		this.velocity.y *= 1 - (this.drag);
 
 		// update position
 		this.position.x += this.velocity.x + noise.x;

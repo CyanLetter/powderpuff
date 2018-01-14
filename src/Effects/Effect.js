@@ -1,14 +1,15 @@
 // Base class for smoke effects
 import Ease from '../Ease.js';
 import Particle from '../Particles/Particle.js';
+import FastBlur from '../FastBlur.js';
 
 export default class Effect {
 	constructor(parent, options) {
 		options = options || {};
 
 		this.parent = parent;
-		this.framerate = options.framerate || 60;
-		this.tick = 1000 / this.framerate;
+
+		this.theme = options.theme || this.parent.themes.meteor;
 
 		this.activeParticles = [];
 
@@ -41,6 +42,9 @@ export default class Effect {
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = this.canvas.height = this.parent.canvasSize;
 		this.ctx = this.canvas.getContext('2d');
+
+		// this.ctx.fillStyle = '#ffffff';
+		// this.ctx.fillRect(0, 0, this.canvasSize, this.canvasSize);
 		// particle canvas
 		this.pCanvas = document.createElement('canvas');
 		this.pCanvas.width = this.pCanvas.height = this.parent.canvasSize;
@@ -51,6 +55,7 @@ export default class Effect {
 
 	init() {
 		for (let i = 0; i < 50; i++) {
+			let randColor = this.theme[Math.floor(Math.random() * this.theme.length)];
 			let newParticle = new Particle(this.pctx, {
 				lifetime: 1000,
 				size: 50,
@@ -59,8 +64,8 @@ export default class Effect {
 				xVelocity: -20 + (Math.random() * 40),
 				yVelocity: -20 + (Math.random() * 40),
 				drag: 0.02,
-				startColor: 'hsla(' + (-20 + i) + ', 80%, 50%, 0.01)',
-				endColor: 'hsla(' + (30 + i) + ', 80%, 50%, 0.01)',
+				startColor: randColor.start,
+				endColor: randColor.end,
 				noiseType: 'random',
 				noiseAmount: 10 
 			});
@@ -69,16 +74,8 @@ export default class Effect {
 		}
 	}
 
-	update(timestamp) {
-		if (!this.startTime) {
-			this.startTime = timestamp;
-			this.lastTime = timestamp;
-		}
+	update(dt) {
 		
-		let dt = timestamp - this.lastTime;
-		let timeScale = dt / this.tick;
-
-		this.lastTime = timestamp;
 		this.currentTime += dt;
 		this.percentComplete = this.currentTime / this.lifetime;
 		if (this.percentComplete >= 1) {
@@ -92,7 +89,7 @@ export default class Effect {
 				this.activeParticles[i] = null;
 				this.activeParticles.splice(i, 1);
 			} else {
-				this.activeParticles[i].update(dt, timeScale);
+				this.activeParticles[i].update(dt);
 			}
 		}
 
@@ -103,6 +100,10 @@ export default class Effect {
 		let canvasDims = this.scaleDrawable(this.canvas.width, this.canvas.height, this.currentScale);
 
 		this.ctx.drawImage(this.pCanvas, canvasDims.x + this.position.x, canvasDims.y + this.position.y, canvasDims.width, canvasDims.height);
+
+		// this.ctx.globalCompositeOperation = 'source-out';
+		// FastBlur.extremeFractalBlur(this.canvas, this.ctx, 4);
+		// this.ctx.globalCompositeOperation = 'source-over';
 	}
 
 	scaleDrawable(w, h, scale) {

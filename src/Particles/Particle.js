@@ -1,7 +1,7 @@
 // Base class for smoke particles
 import Ease from '../Ease.js';
 import Noise from '../Noise.js';
-import Color from '../Color.js';
+import {Color} from '../Color.js';
 
 export default class Particle {
 	constructor(context, options) {
@@ -61,13 +61,13 @@ export default class Particle {
 
 	}
 
-	move(timeScale, noise) {
+	move(noise) {
 		
 		// update velocity
-		this.velocity.x += this.force.x * timeScale;
-		this.velocity.x *= 1 - (this.drag * timeScale);
-		this.velocity.y += this.force.y * timeScale;
-		this.velocity.y *= 1 - (this.drag * timeScale);
+		this.velocity.x += this.force.x;
+		this.velocity.x *= 1 - (this.drag);
+		this.velocity.y += this.force.y;
+		this.velocity.y *= 1 - (this.drag);
 
 		// update position
 		this.position.x += this.velocity.x + noise.x;
@@ -103,7 +103,7 @@ export default class Particle {
 		}
 	}
 
-	update(dt, timeScale, noise) {
+	update(dt, noise) {
 		this.currentTime += dt;
 		this.percentComplete = this.currentTime / this.lifetime;
 		if (this.percentComplete >= 1) {
@@ -112,6 +112,6 @@ export default class Particle {
 		}
 		noise = noise || {x: 0, y: 0};
 
-		this.move(timeScale, noise);
+		this.move(noise);
 	}
 }
