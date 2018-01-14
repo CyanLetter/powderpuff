@@ -125,10 +125,10 @@ export default class Powderpuff {
 			});
 			break;
 		case 'flak':
-			// ignores themes
 			newEffect = new PrismaFlak(this, {
 				lifetime: 5000,
-				endScale: 1.2
+				endScale: 1.2,
+				theme: theme
 			});
 			
 			break;

@@ -115,49 +115,47 @@ export class ColorThemes {
 
 	static get winter() {
 		return [
-			{ // brown
-				start: 'hsla(27, 38%, 16%, 0.05)',
-				end: 'hsla(27, 38%, 10%, 0.05)'
+			{ // ice ice baby
+				start: 'hsla(201, 39%, 77%, 0.05)',
+				end: 'hsla(185, 50%, 65%, 0.05)'
+			},
+			{ // turn around bright ice
+				start: 'hsla(181, 100%, 77%, 0.05)',
+				end: 'hsla(168, 100%, 85%, 0.05)'
+			},
+			{ // grey-test song in the world
+				start: 'hsla(174, 5%, 62%, 0.05)',
+				end: 'hsla(174, 5%, 100%, 0.05)'
+			},
+			{ // dark blue dark blue
+				start: 'hsla(202, 54%, 61%, 0.05)',
+				end: 'hsla(214, 76%, 78%, 0.05)'
 			}
 		];
 	}
 
 	static get solar() {
 		return [
-			{ // brown
-				start: 'hsla(27, 38%, 16%, 0.05)',
-				end: 'hsla(27, 38%, 10%, 0.05)'
+			{ // orange
+				start: 'hsla(25, 100%, 50%, 0.05)',
+				end: 'hsla(27, 100%, 60%, 0.05)'
+			},
+			{ // burnt sienna
+				start: 'hsla(17, 100%, 35%, 0.05)',
+				end: 'hsla(10, 100%, 30%, 0.05)'
+			},
+			{ // red blood cell
+				start: 'hsla(0, 76%, 23%, 0.05)',
+				end: 'hsla(0, 100%, 35%, 0.05)'
+			},
+			{ // bright red
+				start: 'hsla(0, 81%, 47%, 0.05)',
+				end: 'hsla(11, 100%, 40%, 0.05)'
+			},
+			{ // yellow
+				start: 'hsla(46, 100%, 50%, 0.05)',
+				end: 'hsla(42, 100%, 65%, 0.05)'
 			}
 		];
 	}
-
-	/*
-	meteor: [
-		0x382719,
-		0xff0280,
-		0xff2828,
-		0xfcc500,
-		// 0xfc00c1
-	],
-	bahamas: [
-		0x00f7e6,
-		0x00f79c,
-		0xaad100,
-		0xf4de11,
-		0x0099f2
-	],
-	winter: [
-		0xadcbdb,
-		0x8cfdff,
-		0x99a3a2,
-		0x66a9d1
-	],
-	solar: [
-		0xff6a00,
-		0xb53300,
-		0x680e0e,
-		0xd81717,
-		0xffe100
-	],
-	*/
 }

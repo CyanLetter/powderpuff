@@ -16,7 +16,9 @@ export default class PrismaFlak extends Effect {
 	burst() {
 		let centerX = Math.random() * this.canvas.width;
 		let centerY = Math.random() * this.canvas.width;
-		let initialColor = Math.floor(Math.random() * 360);
+		// let initialColor = Math.floor(Math.random() * 360);
+		let randStart = this.theme[Math.floor(Math.random() * this.theme.length)].start;
+		let randEnd = this.theme[Math.floor(Math.random() * this.theme.length)].end;
 
 		for (let i = 0; i < 50; i++) {
 			let newParticle = new Particle(this.pctx, {
@@ -28,7 +30,8 @@ export default class PrismaFlak extends Effect {
 				yVelocity: -40 + (Math.random() * 80),
 				// yForce: 0.4,
 				drag: 0.1,
-				startColor: 'hsla(' + (initialColor + i) + ', 80%, 50%, 0.01)',
+				startColor: randStart,
+				endColor: randEnd,
 				noiseType: 'random',
 				noiseAmount: 10 
 			});

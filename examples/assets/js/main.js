@@ -8,6 +8,6 @@ window.onload = function() {
 	});
 
 	window.setTimeout(function() {
-		pp.puff('ribbons', pp.themes.bahamas);
+		pp.puff('ribbons', pp.themes.winter);
 	}, 1000);
 }
