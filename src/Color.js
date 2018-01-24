@@ -70,20 +70,20 @@ export class ColorThemes {
 	static get meteor() {
 		return [
 			{ // brown
-				start: 'hsla(27, 38%, 30%, 0.05)',
-				end: 'hsla(27, 38%, 15%, 0.05)'
+				start: 'hsla(27, 38%, 30%, 1)',
+				end: 'hsla(27, 38%, 15%, 1)'
 			},
 			{ // magenta
-				start: 'hsla(330, 100%, 50%, 0.05)',
-				end: 'hsla(350, 80%, 50%, 0.05)'
+				start: 'hsla(330, 100%, 50%, 1)',
+				end: 'hsla(350, 80%, 50%, 1)'
 			},
 			{ // red-orange
-				start: 'hsla(0, 100%, 58%, 0.05)',
-				end: 'hsla(20, 100%, 45%, 0.05)'
+				start: 'hsla(0, 100%, 58%, 1)',
+				end: 'hsla(20, 100%, 45%, 1)'
 			},
 			{ // yellow
-				start: 'hsla(52, 100%, 50%, 0.05)',
-				end: 'hsla(40, 100%, 45%, 0.05)'
+				start: 'hsla(52, 100%, 50%, 1)',
+				end: 'hsla(40, 100%, 45%, 1)'
 			}
 		];
 	}
@@ -91,24 +91,24 @@ export class ColorThemes {
 	static get bahamas() {
 		return [
 			{ // blue-aqua
-				start: 'hsla(176, 100%, 48%, 0.05)',
-				end: 'hsla(158, 100%, 48%, 0.05)'
+				start: 'hsla(176, 100%, 48%, 1)',
+				end: 'hsla(158, 100%, 48%, 1)'
 			},
 			{ // aqua-green
-				start: 'hsla(158, 100%, 48%, 0.05)',
-				end: 'hsla(144, 80%, 48%, 0.05)'
+				start: 'hsla(158, 100%, 48%, 1)',
+				end: 'hsla(144, 80%, 48%, 1)'
 			},
 			{ // yellow-green
-				start: 'hsla(71, 100%, 45%, 0.05)',
-				end: 'hsla(58, 100%, 61%, 0.05)'
+				start: 'hsla(71, 100%, 45%, 1)',
+				end: 'hsla(58, 100%, 61%, 1)'
 			},
 			{ // yellow-orange
-				start: 'hsla(54, 91%, 51%, 0.05)',
-				end: 'hsla(39, 100%, 55%, 0.05)'
+				start: 'hsla(54, 91%, 51%, 1)',
+				end: 'hsla(39, 100%, 55%, 1)'
 			},
 			{ // deep blue
-				start: 'hsla(202, 100%, 47%, 0.05)',
-				end: 'hsla(222, 90%, 60%, 0.05)'
+				start: 'hsla(202, 100%, 47%, 1)',
+				end: 'hsla(222, 90%, 60%, 1)'
 			}
 		];
 	}
@@ -116,20 +116,20 @@ export class ColorThemes {
 	static get winter() {
 		return [
 			{ // ice ice baby
-				start: 'hsla(201, 39%, 77%, 0.05)',
-				end: 'hsla(185, 50%, 65%, 0.05)'
+				start: 'hsla(201, 39%, 77%, 1)',
+				end: 'hsla(185, 50%, 65%, 1)'
 			},
 			{ // turn around bright ice
-				start: 'hsla(181, 100%, 77%, 0.05)',
-				end: 'hsla(168, 100%, 85%, 0.05)'
+				start: 'hsla(181, 100%, 77%, 1)',
+				end: 'hsla(168, 100%, 85%, 1)'
 			},
 			{ // grey-test song in the world
-				start: 'hsla(174, 5%, 62%, 0.05)',
-				end: 'hsla(174, 5%, 100%, 0.05)'
+				start: 'hsla(174, 5%, 62%, 1)',
+				end: 'hsla(174, 5%, 100%, 1)'
 			},
 			{ // dark blue dark blue
-				start: 'hsla(202, 54%, 61%, 0.05)',
-				end: 'hsla(214, 76%, 78%, 0.05)'
+				start: 'hsla(202, 54%, 61%, 1)',
+				end: 'hsla(214, 76%, 78%, 1)'
 			}
 		];
 	}
@@ -137,24 +137,24 @@ export class ColorThemes {
 	static get solar() {
 		return [
 			{ // orange
-				start: 'hsla(25, 100%, 50%, 0.05)',
-				end: 'hsla(27, 100%, 60%, 0.05)'
+				start: 'hsla(25, 100%, 50%, 1)',
+				end: 'hsla(27, 100%, 60%, 1)'
 			},
 			{ // burnt sienna
-				start: 'hsla(17, 100%, 35%, 0.05)',
-				end: 'hsla(10, 100%, 30%, 0.05)'
+				start: 'hsla(17, 100%, 35%, 1)',
+				end: 'hsla(10, 100%, 30%, 1)'
 			},
 			{ // red blood cell
-				start: 'hsla(0, 76%, 23%, 0.05)',
-				end: 'hsla(0, 100%, 35%, 0.05)'
+				start: 'hsla(0, 76%, 23%, 1)',
+				end: 'hsla(0, 100%, 35%, 1)'
 			},
 			{ // bright red
-				start: 'hsla(0, 81%, 47%, 0.05)',
-				end: 'hsla(11, 100%, 40%, 0.05)'
+				start: 'hsla(0, 81%, 47%, 1)',
+				end: 'hsla(11, 100%, 40%, 1)'
 			},
 			{ // yellow
-				start: 'hsla(46, 100%, 50%, 0.05)',
-				end: 'hsla(42, 100%, 65%, 0.05)'
+				start: 'hsla(46, 100%, 50%, 1)',
+				end: 'hsla(42, 100%, 65%, 1)'
 			}
 		];
 	}

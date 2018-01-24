@@ -75,6 +75,8 @@ export default class Effect {
 	}
 
 	update(dt) {
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.pctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		
 		this.currentTime += dt;
 		this.percentComplete = this.currentTime / this.lifetime;
