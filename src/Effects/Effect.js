@@ -38,6 +38,8 @@ export default class Effect {
 			end: options.endScale || 1
 		};
 
+		this.delay = options.delay || 0;
+
 		// render canvas
 		this.canvas = document.createElement('canvas');
 		this.canvas.width = this.canvas.height = this.parent.canvasSize;
@@ -50,7 +52,7 @@ export default class Effect {
 		this.pCanvas.width = this.pCanvas.height = this.parent.canvasSize;
 		this.pctx = this.pCanvas.getContext('2d');
 
-		this.init();
+		this.startDelay = setTimeout(() => this.init(), this.delay);
 	}
 
 	init() {

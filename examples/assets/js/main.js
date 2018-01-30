@@ -8,6 +8,7 @@ window.onload = function() {
 	});
 
 	window.setTimeout(function() {
-		pp.puff('ribbons', pp.themes.winter);
+		// pp.puff('flak', pp.themes.bahamas);
+		pp.puff('radial', pp.themes.meteor);
 	}, 1000);
 }

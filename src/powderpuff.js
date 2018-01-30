@@ -2,6 +2,8 @@ import Effect from './Effects/Effect.js'; // default effect
 import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 import WispTest from './Effects/WispTest.js'; // Wisp default effect
 import Ribbons from './Effects/Ribbons.js'; // Wisp ribbon effect
+import Radial from './Effects/Radial.js'; // Concentric ring effect
+import ClearToColor from './Effects/ClearToColor.js'; // Background clear effect
 import FastBlur from './FastBlur.js';
 import Utilities from './Utilities.js';
 import {ColorThemes} from './Color.js';
@@ -23,7 +25,7 @@ export default class Powderpuff {
 
 		this.themes = ColorThemes;
 
-		console.log(this.themes.meteor);
+		this.blurAmount = 0;
 
 		this.init();
 	}
@@ -105,6 +107,7 @@ export default class Powderpuff {
 
 	puff(effect, theme) {
 		let newEffect;
+		let clearEffect;
 
 		if (typeof theme === 'undefined') {
 			theme = this.themes.meteor;
@@ -118,6 +121,8 @@ export default class Powderpuff {
 				endScale: 1.5,
 				theme: theme
 			});
+			this.blurAmount = 4;
+
 			break;
 		case 'wispTest':
 			newEffect = new WispTest(this, {
@@ -125,13 +130,16 @@ export default class Powderpuff {
 				endScale: 2,
 				theme: theme
 			});
+			this.blurAmount = 4;
+
 			break;
 		case 'flak':
 			newEffect = new PrismaFlak(this, {
-				lifetime: 5000,
+				lifetime: 3000,
 				endScale: 1.2,
 				theme: theme
 			});
+			this.blurAmount = 4;
 			
 			break;
 		case 'ribbons':
@@ -140,11 +148,38 @@ export default class Powderpuff {
 				endScale: 2,
 				theme: theme
 			});
+			this.blurAmount = 4;
+			
+			break;
+		case 'radial':
+			clearEffect = new ClearToColor(this, {
+				lifetime: 500,
+				// color: theme[Math.floor(Math.random() * theme.length)].end
+			});
+			newEffect = new Radial(this, {
+				lifetime: 3500,
+				endScale: 1,
+				delay: 500,
+				theme: theme
+			});
+			this.blurAmount = 0;
+			
+			break;
+		case 'clear':
+			clearEffect = new ClearToColor(this, {
+				lifetime: 500
+			});
+			this.blurAmount = 4;
 			
 			break;
 		}
 
-		this.activeEffects.push(newEffect);
+		if (typeof clearEffect !== 'undefined') {
+			this.activeEffects.push(clearEffect);
+		}
+		if (typeof newEffect !== 'undefined') {
+			this.activeEffects.push(newEffect);
+		}
 	}
 
 	update(timestamp) {
@@ -162,8 +197,8 @@ export default class Powderpuff {
 			this.ctx.drawImage(this.activeEffects[i].canvas, 0, 0);
 		}
 
-		if (this.activeEffects.length > 0) {
-			FastBlur.extremeFractalBlur(this.canvas, this.ctx, 4);
+		if (this.activeEffects.length > 0 && this.blurAmount > 0) {
+			FastBlur.extremeFractalBlur(this.canvas, this.ctx, this.blurAmount);
 		}
 
 		// remove dead effects
