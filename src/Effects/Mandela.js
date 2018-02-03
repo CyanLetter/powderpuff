@@ -25,6 +25,7 @@ export default class Mandela extends Effect {
 	makeMandelbrot(symmetry) {
 		let steps = (360 / symmetry) * this.d2r;
 		let randColor = this.theme[Math.floor(Math.random() * this.theme.length)];
+		let sync = Math.random() > 0.5;
 		
 		let xMod = Math.random() * this.diameter;
 		let yMod = Math.random() * this.diameter;
@@ -32,6 +33,7 @@ export default class Mandela extends Effect {
 		let yVelocity = Math.random() * this.maxVelocity * (Math.random() > 0.5 ? 1 : -1);
 		let xForce = Math.random() * 0.1 * Math.sign(-xVelocity);
 		let yForce = Math.random() * 0.1 * Math.sign(-yVelocity);
+		let angularVelocity = (Math.random() * 20) - 10;
 
 		// if (Math.abs(xVelocity) > Math.abs(yVelocity)) {
 		// 	xForce = -xVelocity * 0.01;
@@ -62,7 +64,7 @@ export default class Mandela extends Effect {
 				xForce: (sin * xForce),
 				yForce: (cos * yForce),
 				offsetY: Math.random() * 50,
-				angularVelocity: (Math.random() * 20) - 10,
+				angularVelocity: sync ? sin * angularVelocity : (Math.random() * 20) - 10,
 				startColor: randColor.start,
 				endColor: randColor.end
 			});
