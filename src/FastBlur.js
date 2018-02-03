@@ -3,10 +3,11 @@ export default class FastBlur {
 		let x = 0;
 		let y = 0;
 
-		aCtx.globalAlpha = 1 / 2;
+		aCtx.globalAlpha = 0.2;
+		let dirSeed = iterations < 4 ? Math.floor(Math.random() * 4) : 0;
 		for (let i = 0; i < iterations; ++i) {
-			let direction = i % 4;
-			let offset = i * 2 + 1;
+			let direction = (dirSeed + i) % 4;
+			let offset = (Math.floor(i / 4) * 4) + 1;
 
 			switch (direction) {
 			case 0: // Up.

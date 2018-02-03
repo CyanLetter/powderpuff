@@ -148,7 +148,7 @@ export default class Powderpuff {
 				endScale: 2,
 				theme: theme
 			});
-			this.blurAmount = 4;
+			this.blurAmount = 8;
 			
 			break;
 		case 'radial':
@@ -162,7 +162,7 @@ export default class Powderpuff {
 				delay: 500,
 				theme: theme
 			});
-			this.blurAmount = 0;
+			this.blurAmount = 1;
 			
 			break;
 		case 'clear':
