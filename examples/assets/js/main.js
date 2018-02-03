@@ -9,6 +9,6 @@ window.onload = function() {
 
 	window.setTimeout(function() {
 		// pp.puff('flak', pp.themes.bahamas);
-		pp.puff('radial', pp.themes.meteor);
+		pp.puff('mandela', pp.themes.winter);
 	}, 1000);
 }

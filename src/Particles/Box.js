@@ -7,17 +7,8 @@ export default class Box extends Particle {
 	constructor(context, options) {
 		super(context, options);
 
-		// length of the line
-		this.rotation = options.rotation || 0;
-		this.angularVelocity = options.angularVelocity || 0;
-
 		this.width = options.width || 50;
 		this.height = options.height || 50;
-
-		this.offset = {
-			x: options.offsetX || 0,
-			y: options.offsetY || 0
-		}; // how far away from center pivot point the square is
 	}
 
 	move(noise) {

@@ -44,11 +44,13 @@ export default class Particle {
 		this.color = new Color(options.startColor || 'hsla(0, 100%, 50%, 0.01)', options.endColor || 'hsla(0, 100%, 50%, 0.01)');
 		this.currentColor = this.color.lerp(0);
 
-		// TODO: Implement particle rotation
-		this.rotation = {
-			start: options.startRotation || 0,
-			end: options.endRotation || 6.28 // 2 radians
-		};
+		this.rotation = options.rotation || 0;
+		this.angularVelocity = options.angularVelocity || 0;
+
+		this.offset = {
+			x: options.offsetX || 0,
+			y: options.offsetY || 0
+		}; // how far away from center pivot point the particle is
 
 		this.currentScale = options.startScale || 1;
 		this.scale = {
@@ -69,6 +71,9 @@ export default class Particle {
 		this.velocity.y += this.force.y;
 		this.velocity.y *= 1 - (this.drag);
 
+		this.rotation += this.angularVelocity;
+		this.angularVelocity *= 1 - (this.drag);
+
 		// update position
 		this.position.x += this.velocity.x + noise.x;
 		this.position.y += this.velocity.y + noise.y;
@@ -84,9 +89,21 @@ export default class Particle {
 
 	draw() {
 		this.ctx.fillStyle = this.currentColor;
-		this.ctx.beginPath();
-		this.ctx.arc(this.position.x, this.position.y, this.size * this.currentScale, 0, 6.28, false);
-		this.ctx.fill();
+		if (this.rotation !== 0) {
+			this.ctx.translate(this.position.x, this.position.y);
+			this.ctx.rotate(this.rotation * Math.PI / 180);
+			this.ctx.beginPath();
+			this.ctx.arc(0 - (this.size / 2) + this.offset.x, 0 - (this.size / 2) + this.offset.y, this.size * this.currentScale, 0, 6.28, false);
+			this.ctx.fill();
+			this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+		} else {
+			this.ctx.beginPath();
+			this.ctx.arc(this.position.x, this.position.y, this.size * this.currentScale, 0, 6.28, false);
+			this.ctx.fill();
+		}
+		
+
+		
 	}
 
 	applyNoise() {

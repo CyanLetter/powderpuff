@@ -3,6 +3,7 @@ import PrismaFlak from './Effects/PrismaFlak.js'; // color bursts
 import WispTest from './Effects/WispTest.js'; // Wisp default effect
 import Ribbons from './Effects/Ribbons.js'; // Wisp ribbon effect
 import Radial from './Effects/Radial.js'; // Concentric ring effect
+import Mandela from './Effects/Mandela.js'; // line arc bend thing
 import ClearToColor from './Effects/ClearToColor.js'; // Background clear effect
 import FastBlur from './FastBlur.js';
 import Utilities from './Utilities.js';
@@ -163,6 +164,20 @@ export default class Powderpuff {
 				theme: theme
 			});
 			this.blurAmount = 1;
+			
+			break;
+		case 'mandela':
+			clearEffect = new ClearToColor(this, {
+				lifetime: 500,
+				// color: theme[Math.floor(Math.random() * theme.length)].end
+			});
+			newEffect = new Mandela(this, {
+				lifetime: 5000,
+				endScale: 1,
+				delay: 500,
+				theme: theme
+			});
+			this.blurAmount = 0;
 			
 			break;
 		case 'clear':
