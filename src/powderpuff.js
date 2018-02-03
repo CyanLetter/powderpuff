@@ -149,7 +149,7 @@ export default class Powderpuff {
 				endScale: 2,
 				theme: theme
 			});
-			this.blurAmount = 8;
+			this.blurAmount = 4;
 			
 			break;
 		case 'radial':
@@ -172,12 +172,12 @@ export default class Powderpuff {
 				// color: theme[Math.floor(Math.random() * theme.length)].end
 			});
 			newEffect = new Mandela(this, {
-				lifetime: 5000,
+				lifetime: 6000,
 				endScale: 1,
 				delay: 500,
 				theme: theme
 			});
-			this.blurAmount = 0;
+			this.blurAmount = 4;
 			
 			break;
 		case 'clear':

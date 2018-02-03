@@ -27,7 +27,7 @@ export default class Ribbons extends Effect {
 			noiseType: 'wave',
 			noiseAmount: 10,
 			length: 100,
-			thickness: 10,
+			thickness: 30,
 			tailFreq: 0.05,
 			tailAmp: 1
 		});

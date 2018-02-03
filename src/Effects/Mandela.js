@@ -62,7 +62,7 @@ export default class Mandela extends Effect {
 				xForce: (sin * xForce),
 				yForce: (cos * yForce),
 				offsetY: Math.random() * 50,
-				angularVelocity: Math.random() * 10,
+				angularVelocity: (Math.random() * 20) - 10,
 				startColor: randColor.start,
 				endColor: randColor.end
 			});
