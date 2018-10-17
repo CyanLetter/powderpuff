@@ -1,14 +1,8 @@
 # Powderpuff
 
-Canvas 2D based smoke generation library.
+A Canvas 2D based art effect generator.
 
-<!-- ## Features
-
-* Webpack 3 based.
-* ES6 as a source.
-* Exports in a [umd](https://github.com/umdjs/umd) format so your library works everywhere.
-* ES6 test setup with [Mocha](http://mochajs.org/) and [Chai](http://chaijs.com/).
-* Linting with [ESLint](http://eslint.org/). -->
+Check out the demo at [CyanLetter.github.io/powderpuff](http://CyanLetter.github.io/powderpuff)
 
 ## Scripts
 

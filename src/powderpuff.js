@@ -116,19 +116,16 @@ export default class Powderpuff {
 		Utilities.shuffle(theme);
 
 		switch (effect) {
-		case 'test':
+		case 'default':
+			clearEffect = new ClearToColor(this, {
+				lifetime: 500,
+				color: 'hsla(0, 0%, 0%, 1)'
+				// color: theme[Math.floor(Math.random() * theme.length)].end
+			});
 			newEffect = new Effect(this, {
 				lifetime: 3000,
 				endScale: 1.5,
-				theme: theme
-			});
-			this.blurAmount = 4;
-
-			break;
-		case 'wispTest':
-			newEffect = new WispTest(this, {
-				lifetime: 7000,
-				endScale: 2,
+				delay: 500,
 				theme: theme
 			});
 			this.blurAmount = 4;
@@ -155,6 +152,7 @@ export default class Powderpuff {
 		case 'radial':
 			clearEffect = new ClearToColor(this, {
 				lifetime: 500,
+				color: 'hsla(0, 0%, 0%, 1)'
 				// color: theme[Math.floor(Math.random() * theme.length)].end
 			});
 			newEffect = new Radial(this, {
@@ -169,6 +167,7 @@ export default class Powderpuff {
 		case 'mandela':
 			clearEffect = new ClearToColor(this, {
 				lifetime: 500,
+				color: 'hsla(0, 0%, 0%, 1)'
 				// color: theme[Math.floor(Math.random() * theme.length)].end
 			});
 			newEffect = new Mandela(this, {

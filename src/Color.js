@@ -158,4 +158,17 @@ export class ColorThemes {
 			}
 		];
 	}
+
+	static get random() {
+		let rand = Math.random();
+		if (rand < 0.25) {
+			return this.meteor;
+		} else if (rand < 0.5) {
+			return this.bahamas;
+		} else if (rand < 0.75) {
+			return this.winter;
+		} else {
+			return this.solar;
+		}
+	}
 }
